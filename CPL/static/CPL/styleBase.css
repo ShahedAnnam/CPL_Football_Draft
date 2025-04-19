@@ -1,0 +1,67 @@
+/* Reset & base */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: 'Poppins', sans-serif;
+    background-color: #f4f4f7;
+}
+
+/* Custom Navbar */
+.cpl-navbar {
+    background-color: #121826;
+    color: #fff;
+    padding: 0.4rem 2rem;  /* Reduced padding */
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.15);
+}
+
+.cpl-navbar-brand {
+    font-size: 1.2rem;  /* Adjusted for compact */
+    font-weight: 600;
+    color: #ffffff;
+    text-decoration: none;
+    letter-spacing: 1px;
+}
+
+.cpl-navbar-links {
+    display: flex;
+    gap: 1rem;  /* Reduced gap between links */
+    list-style: none;
+}
+
+.cpl-navbar-links li a {
+    text-decoration: none;
+    color: #c0c8d6;
+    font-size: 0.9rem;  /* Slightly smaller font */
+    transition: color 0.3s ease, transform 0.2s ease;
+}
+
+.cpl-navbar-links li a:hover {
+    color: #ffffff;
+    transform: translateY(-1px);
+}
+
+/* Responsive: Keep items on one line with smaller font */
+@media (max-width: 768px) {
+    .cpl-navbar {
+        padding: 0.3rem 1.5rem;  /* Reduced padding for small screens */
+    }
+
+    .cpl-navbar-brand {
+        font-size: 1.1rem;  /* Further reduce brand font size */
+    }
+
+    .cpl-navbar-links {
+        gap: 0.8rem;  /* Adjusted gap */
+    }
+
+    .cpl-navbar-links li a {
+        font-size: 0.85rem;  /* Smaller font for links */
+    }
+}

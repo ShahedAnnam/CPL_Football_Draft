@@ -1,0 +1,14 @@
+<!-- templates/register.html -->
+{% extends 'CPL/base.html' %}
+{% block content %}
+<div class="max-w-md mx-auto mt-10 p-6 bg-white shadow-xl rounded-xl">
+  <h2 class="text-xl font-bold mb-4 text-center">Register</h2>
+  <form method="POST">
+    {% csrf_token %}
+    {{ form.as_p }}
+    <button type="submit" class="w-full bg-green-600 text-white py-2 rounded-md mt-4 hover:bg-green-700 transition">
+      Register
+    </button>
+  </form>
+</div>
+{% endblock %}

@@ -1,5 +1,5 @@
 from django.db import models
-from django.contrib.auth.models import User  # For authentication
+from django.conf import settings
 
 class Player(models.Model):
     GENDER_CHOICES = [
@@ -17,7 +17,7 @@ class Player(models.Model):
         ('Winger', 'Winger'),
     ]
 
-    user = models.OneToOneField(User, on_delete=models.CASCADE)  # Link with Django Auth
+    user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
     name = models.CharField(max_length=100)
     gender = models.CharField(max_length=1, choices=GENDER_CHOICES)
     age = models.IntegerField()
