@@ -1,0 +1,19 @@
+{% extends 'CPL/base.html' %}
+{% load static %}
+
+{% block head %}
+<link rel="stylesheet" href="{% static 'team/styleteam_profile.css' %}">
+{% endblock %}
+
+{% block content %}
+<div class="team-profile-wrapper">
+    <div class="team-profile-form">
+        <h2>Complete Your Team Profile</h2>
+        <form method="POST" enctype="multipart/form-data">
+            {% csrf_token %}
+            {{ form.as_p }}
+            <button type="submit" class="btn-save">Save Profile</button>
+        </form>
+    </div>
+</div>
+{% endblock %}

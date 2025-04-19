@@ -5,5 +5,6 @@ from . import views  # Ensure you're importing views correctly
 app_name = 'team'
 
 urlpatterns = [
-    path('dashboard/', views.dashboard, name='dashboard'),
+    path('', views.dashboard, name='dashboard'),
+     path('complete-profile/', views.complete_profile, name='complete_profile'),
 ]

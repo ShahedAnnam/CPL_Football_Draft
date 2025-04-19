@@ -4,7 +4,7 @@ from django.db import models
 class CustomUser(AbstractUser):
     ROLE_CHOICES = (
         ('player', 'Player'),
-        ('team_owner', 'Team Owner'),
+        ('team', 'Team'),
         ('authority', 'Authority'),
     )
     role = models.CharField(max_length=20, choices=ROLE_CHOICES)

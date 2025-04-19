@@ -1,14 +1,44 @@
-<!-- templates/register.html -->
 {% extends 'CPL/base.html' %}
+{% load static %}
+
+{% block title %}Sign Up{% endblock %}
+
+{% block head %}
+<link rel="stylesheet" href="{% static 'CPL/styleRegister.css' %}">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&display=swap" rel="stylesheet">
+{% endblock %}
+
 {% block content %}
-<div class="max-w-md mx-auto mt-10 p-6 bg-white shadow-xl rounded-xl">
-  <h2 class="text-xl font-bold mb-4 text-center">Register</h2>
-  <form method="POST">
-    {% csrf_token %}
-    {{ form.as_p }}
-    <button type="submit" class="w-full bg-green-600 text-white py-2 rounded-md mt-4 hover:bg-green-700 transition">
-      Register
-    </button>
-  </form>
+<div class="auth-wrapper">
+  <div class="auth-card">
+    <h2>Create your account</h2>
+    <form method="POST" novalidate>
+      {% csrf_token %}
+
+      <div class="form-group">
+        <label for="id_username">Username</label>
+        {{ form.username }}
+      </div>
+
+      <div class="form-group">
+        <label for="id_role">Role</label>
+        {{ form.role }}
+      </div>
+
+      <div class="form-group">
+        <label for="id_password1">Password</label>
+        {{ form.password1 }}
+        <div class="hint-box">{{ form.password1.help_text }}</div>
+      </div>
+
+      <div class="form-group">
+        <label for="id_password2">Confirm Password</label>
+        {{ form.password2 }}
+      </div>
+
+      <button type="submit" class="submit-btn">Sign Up</button>
+    </form>
+    <p class="note">Already have an account? <a href="{% url 'home' %}">Log in</a></p>
+  </div>
 </div>
 {% endblock %}

@@ -11,20 +11,32 @@
 </head>
 <body>
     <nav class="cpl-navbar">
-        <a class="cpl-navbar-brand" href="#">CPL Football Draft</a>
+        <div class="cpl-navbar-brand-group">
+            <img src="{% static 'CPL/logo.png' %}" alt="Logo" class="cpl-navbar-logo">
+            <a class="cpl-navbar-brand" href="{% url 'home' %}">CPL Football Draft</a>
+        </div>
         <ul class="cpl-navbar-links">
             {% if user.is_authenticated %}
-                <li><a href="#">Profile</a></li>
-                <li><a href="#">Logout</a></li>
+                <li><a href="{% url 'home' %}">Home</a></li>
+                <li><a href="{% url user.role|add:':dashboard' %}">Dashboard</a></li>
+                <li><a href="{% url 'profile' %}">Profile</a></li>
+                <li>
+                    <form action="{% url 'profile' %}" method="post" style="display:inline;">
+                        {% csrf_token %}
+                        <button type="subsmit" name="logout" class="btn btn-link p-0 m-0 align-baseline" style="color: #c0c8d6; text-decoration: none;">
+                            Logout
+                        </button>
+                    </form>
+                </li>
             {% else %}
-                <li><a href="#">Login</a></li>
-                <li><a href="{% url 'register_player' %}">Register</a></li>
+                <li><a href="{% url 'home' %}">Login</a></li>
             {% endif %}
         </ul>
     </nav>
     
+    
 
-    <div class="container mt-4">
+    <div class="container" style="padding-top: 100px;">
         {% block content %}{% endblock %}
     </div>
 

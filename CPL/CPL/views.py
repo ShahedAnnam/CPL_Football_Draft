@@ -2,6 +2,11 @@ from django.shortcuts import render, redirect
 from django.contrib.auth import authenticate, login
 from django.contrib import messages
 from .forms import CustomUserCreationForm
+from django.contrib.auth.decorators import login_required
+from django.contrib.auth.forms import PasswordChangeForm
+from django.contrib.auth import update_session_auth_hash
+
+
 
 def home(request):
     if request.method == 'POST':
@@ -13,7 +18,7 @@ def home(request):
             login(request, user)
             if user.role == 'player':
                 return redirect('player:dashboard')
-            elif user.role == 'team_owner':
+            elif user.role == 'team':
                 return redirect('team:dashboard')
             elif user.role == 'authority':
                 return redirect('authority:dashboard')
@@ -34,3 +39,25 @@ def register_view(request):
     else:
         form = CustomUserCreationForm()
     return render(request, 'CPL/register.html', {'form': form})
+
+
+@login_required
+def profile_view(request):
+    password_form = PasswordChangeForm(request.user)
+
+    if request.method == 'POST':
+        if 'change_password' in request.POST:
+            password_form = PasswordChangeForm(user=request.user, data=request.POST)
+            if password_form.is_valid():
+                password_form.save()
+                update_session_auth_hash(request, password_form.user)  # Keeps user logged in
+                messages.success(request, 'Your password was changed successfully.')
+                return redirect('profile')  # refresh the page
+        elif 'logout' in request.POST:
+            from django.contrib.auth import logout
+            logout(request)
+            return redirect('home')
+
+    return render(request, 'CPL/profile.html', {
+        'password_form': password_form
+    })
