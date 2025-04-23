@@ -1,0 +1,10 @@
+
+
+{% block content %}
+  <h2>Your Profile</h2>
+  <p><strong>Name:</strong> {{ player.name }}</p>
+  <p><strong>Age:</strong> {{ player.age }}</p>
+  <p><strong>Position:</strong> {{ player.playing_position }}</p>
+  <p><strong>Batch:</strong> {{ player.batch }}</p>
+  <a href="http://127.0.0.1:8000/player/profile/edit">Edit Profile</a>
+{% endblock %}
