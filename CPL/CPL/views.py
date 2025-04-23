@@ -9,6 +9,10 @@ from django.contrib.auth import update_session_auth_hash
 
 
 def home(request):
+    return render(request, 'CPL/home.html')
+
+
+def login_view(request):
     if request.method == 'POST':
         username = request.POST['username']
         password = request.POST['password']
@@ -25,7 +29,8 @@ def home(request):
         else:
             messages.error(request, 'Invalid username or password')
 
-    return render(request, 'CPL/home.html')
+    return render(request, 'CPL/login.html')
+
 
 
 
@@ -56,6 +61,7 @@ def profile_view(request):
         elif 'logout' in request.POST:
             from django.contrib.auth import logout
             logout(request)
+            request.session.flush()  # Clears any additional session data manually (if needed)
             return redirect('home')
 
     return render(request, 'CPL/profile.html', {
