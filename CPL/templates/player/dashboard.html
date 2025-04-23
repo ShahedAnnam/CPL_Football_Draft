@@ -1,5 +1,35 @@
+{% extends 'CPL/base.html' %}
+{% load static %}
+
+{% block head %}
+  <link rel="stylesheet" href="{% static 'team/styleDashboard.css' %}">
+{% endblock %}
+
 {% block content %}
-  <h1>Player Dashboard</h1>
-  <p>Welcome to your dashboard!</p>
-  <p>Stay focused and keep pushing forward — every training counts. Check back regularly for upcoming matches and new stats!</p>
+<div class="dashboard-container">
+    <div class="dashboard-card">
+        <h2 class="dashboard-title">Player Dashboard</h2>
+        <p class="dashboard-welcome">Welcome, <strong>{{ user.username }}</strong>!</p>
+
+        <div class="dashboard-grid">
+            <!-- Profile Completion Card -->
+            <div class="dashboard-section border-info">
+                <h5>Complete Your Profile</h5>
+                <p>Add your full details to participate in the bidding process.</p>
+                {% comment %} <a href="{% url 'player:complete_profile' %}" class="btn btn-outline-info">Complete Profile</a> {% endcomment %}
+            </div>
+
+            <!-- Features Section -->
+            <div class="dashboard-section border-secondary">
+                <h5>Upcoming Features</h5>
+                <ul>
+                    <li>✔ View Bidding Details</li>
+                    <li>✔ Edit Personal Info</li>
+                    <li>✔ Notifications</li>
+                    <li>✔ Player Ranking</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+</div>
 {% endblock %}

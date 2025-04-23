@@ -1,6 +1,35 @@
 {% extends 'CPL/base.html' %}
+{% load static %}
+
+{% block head %}
+  <link rel="stylesheet" href="{% static 'team/styleDashboard.css' %}">
+{% endblock %}
 
 {% block content %}
-  <h1>Team Dashboard</h1>
-  <p>Welcome to your dashboard!</p>
+<div class="dashboard-container">
+    <div class="dashboard-card">
+        <h2 class="dashboard-title">Team Dashboard</h2>
+        <p class="dashboard-welcome">Welcome, <strong>{{ user.username }}</strong>!</p>
+
+        <div class="dashboard-grid">
+            <!-- Team Profile Section -->
+            <div class="dashboard-section border-primary">
+                <h5>Complete Your Team Profile</h5>
+                <p>Fill in details like team name, logo, and slogan to complete registration.</p>
+                <a href="{% url 'team:complete_profile' %}" class="btn btn-primary">Complete Team Profile</a>
+            </div>
+
+            <!-- Features Section -->
+            <div class="dashboard-section border-dark">
+                <h5>Upcoming Features</h5>
+                <ul>
+                    <li>✔ Bid on Players</li>
+                    <li>✔ View Player List</li>
+                    <li>✔ Team Stats</li>
+                    <li>✔ Notifications</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+</div>
 {% endblock %}
