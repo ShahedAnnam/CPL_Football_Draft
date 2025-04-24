@@ -12,17 +12,25 @@ def dashboard(request):
 
 @login_required
 def complete_profile(request):
-    if hasattr(request.user, 'teamprofile'):
-        return redirect('team:dashboard')  # Already completed
+    try:
+        profile = request.user.teamprofile  # Get existing profile
+        form = TeamProfileForm(request.POST or None, request.FILES or None, instance=profile)
+    except TeamProfile.DoesNotExist:
+        form = TeamProfileForm(request.POST or None, request.FILES or None)
 
     if request.method == 'POST':
-        form = TeamProfileForm(request.POST, request.FILES)
         if form.is_valid():
             profile = form.save(commit=False)
             profile.user = request.user
             profile.save()
             return redirect('team:dashboard')
-    else:
-        form = TeamProfileForm()
 
     return render(request, 'team/complete_profile.html', {'form': form})
+
+
+
+
+@login_required
+def team_list(request):
+    teams = TeamProfile.objects.all()
+    return render(request, 'team/team_list.html', {'teams': teams})

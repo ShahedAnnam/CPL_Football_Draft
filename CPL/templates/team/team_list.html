@@ -1,0 +1,28 @@
+{% extends 'cpl/base.html' %}
+{% load static %}
+
+{% block head %}
+  <link rel="stylesheet" href="{% static 'team/styleTeam_list.css' %}">
+{% endblock %}
+
+{% block content %}
+<div class="team-container">
+    <h1 class="page-title">Registered Teams</h1>
+    
+    {% for team in teams %}
+    <div class="team-card">
+        <div class="team-images">
+            <img class="team-logo" src="{{ team.logo.url }}" alt="{{ team.user.username }} Logo">
+            <img class="profile-pic" src="{{ team.profile_pic.url }}" alt="{{ team.user.username }} Profile Picture">
+        </div>
+        <div class="team-info">
+            <h2 class="team-name">{{ team.user.username }}</h2>
+            <p class="team-slogan">{{ team.slogan }}</p>
+            <a href="#" class="view-players-btn">View Players</a>
+        </div>
+    </div>
+    {% empty %}
+    <p>No teams have registered yet.</p>
+    {% endfor %}
+</div>
+{% endblock %}
