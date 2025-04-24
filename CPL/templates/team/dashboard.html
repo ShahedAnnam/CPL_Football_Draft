@@ -16,7 +16,14 @@
             <div class="dashboard-section border-primary">
                 <h5>Complete Your Team Profile</h5>
                 <p>Fill in details like team name, logo, and slogan to complete registration.</p>
-                <a href="{% url 'team:complete_profile' %}" class="btn btn-primary">Complete Team Profile</a>
+                <a href="{% url 'team:complete_profile' %}" class="dashboard-btn btn-primary">Complete Team Profile</a>
+            </div>
+
+            <!-- View All Teams Section -->
+            <div class="dashboard-section border-success">
+                <h5>Explore Registered Teams</h5>
+                <p>Check out other teams and their details.</p>
+                <a href="{% url 'team:team_list' %}" class="dashboard-btn btn-success">View All Teams</a>
             </div>
 
             <!-- Features Section -->
