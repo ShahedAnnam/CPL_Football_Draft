@@ -6,8 +6,8 @@ app_name = 'player'
 
 urlpatterns = [
     path('', views.dashboard, name='dashboard'),
-    path('player_list/', views.player_list, name='player_list'),
-    path('profile/', views.view_profile, name='player_profile'),
-    path('profile/edit/', views.create_or_update_profile, name='edit_profile')
+    path('list/', views.player_list, name='player_list'),
+    path('profile/', views.player_profile, name='player_profile'),
+    path('complete-profile/', views.complete_profile, name='complete_profile')
 ]
 
