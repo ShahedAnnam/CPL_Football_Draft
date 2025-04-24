@@ -16,7 +16,7 @@
             <a class="cpl-navbar-brand" href="{% url 'home' %}">CPL Football Draft</a>
         </div>
         <ul class="cpl-navbar-links">
-            {% if user.is_authenticated %}
+            {% if user.is_authenticated and user.role %}
                 <li><a href="{% url 'home' %}">Home</a></li>
                 <li><a href="{% url user.role|add:':dashboard' %}">Dashboard</a></li>
                 <li><a href="{% url 'profile' %}">Profile</a></li>

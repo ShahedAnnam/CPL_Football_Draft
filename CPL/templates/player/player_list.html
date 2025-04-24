@@ -1,10 +1,29 @@
+{% extends 'CPL/base.html' %}
+{% load static %}
 
+{% block head %}
+<link rel="stylesheet" href="{% static 'player/stylePlayer_list.css' %}">
+{% endblock %}
 
 {% block content %}
-    <h2>Player List</h2>
-    <ul>
+<div class="container py-5">
+    <h2 class="mb-4 text-center">Registered Players</h2>
+    <div class="row">
         {% for player in players %}
-            <li>{{ player.name }} - {{ player.get_category_display }} - {{ player.base_price }}</li>
+        <div class="col-md-4 mb-4">
+            <div class="card player-card h-100">
+                <img src="{{ player.profile_picture.url }}" class="card-img-top player-img" alt="{{ player.name }}">
+                <div class="card-body">
+                    <h5 class="card-title">{{ player.name }}</h5>
+                    <p class="card-text"><strong>Position:</strong> {{ player.playing_position }}</p>
+                    <p class="card-text"><strong>Batch:</strong> {{ player.batch }}</p>
+                    <p class="card-text"><strong>Assigned Team:</strong> {{ player.assigned_team }}</p>
+                </div>
+            </div>
+        </div>
+        {% empty %}
+        <p class="text-center">No players have registered yet.</p>
         {% endfor %}
-    </ul>
+    </div>
+</div>
 {% endblock %}

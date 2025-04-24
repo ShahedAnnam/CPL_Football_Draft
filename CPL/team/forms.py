@@ -1,7 +1,7 @@
 from django import forms
-from .models import TeamProfile
+from .models import Team
 
-class TeamProfileForm(forms.ModelForm):
+class TeamForm(forms.ModelForm):
     class Meta:
-        model = TeamProfile
+        model = Team
         fields = ['slogan', 'logo', 'profile_pic']

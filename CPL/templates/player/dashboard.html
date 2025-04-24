@@ -12,14 +12,38 @@
         <p class="dashboard-welcome">Welcome, <strong>{{ user.username }}</strong>!</p>
 
         <div class="dashboard-grid">
-            <!-- Profile Completion Card -->
-            <div class="dashboard-section border-info">
+
+            <!-- Complete Profile Card -->
+            <div class="dashboard-section border-info text-center">
                 <h5>Complete Your Profile</h5>
                 <p>Add your full details to participate in the bidding process.</p>
-                {% comment %} <a href="{% url 'player:complete_profile' %}" class="btn btn-outline-info">Complete Profile</a> {% endcomment %}
+                <a href="{% url 'player:complete_profile' %}" class="btn btn-primary mt-2"
+                   style="padding: 10px 24px; border-radius: 10px; font-weight: 500;">
+                    Complete Profile
+                </a>
             </div>
 
-            <!-- Features Section -->
+            <!-- All Players Card -->
+            <div class="dashboard-section border-success text-center">
+                <h5>See All Players</h5>
+                <p>Explore the list of registered players and their profiles.</p>
+                <a href="{% url 'player:player_list' %}" class="btn btn-success mt-2"
+                   style="padding: 10px 24px; border-radius: 10px; font-weight: 500;">
+                    View Player List
+                </a>
+            </div>
+
+            <!-- My Profile Card -->
+            <div class="dashboard-section border-warning text-center">
+                <h5>My Profile</h5>
+                <p>Check your submitted details and update if needed.</p>
+                <a href="{% url 'player:player_profile' %}" class="btn btn-warning mt-2"
+                   style="padding: 10px 24px; border-radius: 10px; font-weight: 500;">
+                    View My Profile
+                </a>
+            </div>
+
+            <!-- Upcoming Features -->
             <div class="dashboard-section border-secondary">
                 <h5>Upcoming Features</h5>
                 <ul>
@@ -29,6 +53,7 @@
                     <li>✔ Player Ranking</li>
                 </ul>
             </div>
+
         </div>
     </div>
 </div>

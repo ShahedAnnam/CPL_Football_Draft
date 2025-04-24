@@ -1,8 +1,8 @@
 from django.shortcuts import render, redirect
 from django.contrib.auth import login
 from django.contrib.auth.decorators import login_required
-from .models import TeamProfile
-from .forms import TeamProfileForm
+from .models import Team
+from .forms import TeamForm
 
 
 def dashboard(request):
@@ -13,10 +13,10 @@ def dashboard(request):
 @login_required
 def complete_profile(request):
     try:
-        profile = request.user.teamprofile  # Get existing profile
-        form = TeamProfileForm(request.POST or None, request.FILES or None, instance=profile)
-    except TeamProfile.DoesNotExist:
-        form = TeamProfileForm(request.POST or None, request.FILES or None)
+        profile = request.user.team  # Get existing profile
+        form = TeamForm(request.POST or None, request.FILES or None, instance=profile)
+    except Team.DoesNotExist:
+        form = TeamForm(request.POST or None, request.FILES or None)
 
     if request.method == 'POST':
         if form.is_valid():
@@ -32,5 +32,5 @@ def complete_profile(request):
 
 @login_required
 def team_list(request):
-    teams = TeamProfile.objects.all()
+    teams = Team.objects.all()
     return render(request, 'team/team_list.html', {'teams': teams})
