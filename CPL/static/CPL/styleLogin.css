@@ -1,0 +1,130 @@
+/* FRESH TEAL + CORAL THEME */
+body {
+    margin: 0;
+    padding: 0;
+    font-family: 'Inter', sans-serif;
+    background: linear-gradient(135deg, #0d9488 0%, #f97316 100%);
+    min-height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    animation: gradient 8s ease infinite;
+  }
+  
+  @keyframes gradient {
+    0% { background-position: 0% 50%; }
+    50% { background-position: 100% 50%; }
+    100% { background-position: 0% 50%; }
+  }
+  
+  .auth-card {
+    background: rgba(255, 255, 255, 0.12);
+    backdrop-filter: blur(16px);
+    border-radius: 16px;
+    padding: 40px;
+    width: 90%;
+    max-width: 450px;
+    box-shadow: 0 12px 30px rgba(13, 148, 136, 0.25);
+    border: 1px solid rgba(255, 255, 255, 0.18);
+  }
+  
+  .error-message {
+    background: rgba(239, 68, 68, 0.15);
+    color: #fee2e2;
+    padding: 12px 16px;
+    border-radius: 10px;
+    margin-bottom: 20px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    border-left: 4px solid #ef4444;
+    animation: fadeIn 0.3s ease-out;
+  }
+  
+  @keyframes fadeIn {
+    from { opacity: 0; transform: translateY(-10px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+  
+  .auth-logo {
+    width: 80px;
+    height: 80px;
+    margin: 0 auto 25px;
+    display: block;
+    filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.1));
+  }
+  
+  .auth-card h2 {
+    color: white;
+    text-align: center;
+    margin-bottom: 30px;
+    font-size: 1.8rem;
+    text-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  }
+  
+  .form-group {
+    margin-bottom: 25px;
+  }
+  
+  .form-group label {
+    display: block;
+    color: rgba(255, 255, 255, 0.95);
+    margin-bottom: 8px;
+    font-weight: 500;
+  }
+  
+  .form-group input {
+    width: 100%;
+    padding: 14px;
+    border-radius: 10px;
+    background: rgba(255, 255, 255, 0.15);
+    border: 1px solid rgba(255, 255, 255, 0.3);
+    color: white;
+    font-size: 1rem;
+    transition: all 0.3s ease;
+  }
+  
+  .form-group input:focus {
+    background: rgba(255, 255, 255, 0.25);
+    border-color: white;
+    outline: none;
+    box-shadow: 0 0 0 3px rgba(255, 255, 255, 0.2);
+  }
+  
+  .submit-btn {
+    width: 100%;
+    padding: 14px;
+    background: linear-gradient(to right, #0d9488, #f97316);
+    color: white;
+    border: none;
+    border-radius: 10px;
+    font-weight: 600;
+    font-size: 1rem;
+    cursor: pointer;
+    margin-top: 15px;
+    transition: all 0.3s ease;
+    box-shadow: 0 4px 15px rgba(13, 148, 136, 0.4);
+  }
+  
+  .submit-btn:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 6px 20px rgba(249, 115, 22, 0.5);
+  }
+  
+  .note {
+    text-align: center;
+    margin-top: 25px;
+    color: rgba(255, 255, 255, 0.9);
+  }
+  
+  .note a {
+    color: white;
+    font-weight: 600;
+    text-decoration: none;
+    transition: all 0.2s ease;
+  }
+  
+  .note a:hover {
+    text-decoration: underline;
+    color: #fef08a;
+  }
