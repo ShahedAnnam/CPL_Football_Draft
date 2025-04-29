@@ -14,3 +14,26 @@
     border-top-left-radius: 15px;
     border-top-right-radius: 15px;
 }
+.filter-form {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px; /* space between inputs */
+    flex-wrap: wrap; /* make it responsive on smaller screens */
+    margin-bottom: 20px;
+}
+
+.filter-form .form-group {
+    margin: 0;
+}
+
+.filter-form input,
+.filter-form select {
+    padding: 8px;
+    font-size: 16px;
+}
+
+.filter-form button {
+    padding: 8px 16px;
+    font-size: 16px;
+}

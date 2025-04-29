@@ -8,6 +8,28 @@
 {% block content %}
 <div class="container py-5">
     <h2 class="mb-4 text-center">Registered Players</h2>
+    
+<!-- Filter Section -->
+<form method="GET" action="{% url 'player:player_list' %}" class="filter-form">
+    <div class="form-group">
+        <input type="text" name="batch" id="batch" class="form-control" placeholder="Search Batch..." value="{{ batch_filter|default_if_none:'' }}">
+    </div>
+
+    <div class="form-group">
+        <select name="position" id="position" class="form-control">
+            <option value="">All Positions</option>
+            <option value="Forward" {% if position_filter == 'Forward' %}selected{% endif %}>Forward</option>
+            <option value="Midfielder" {% if position_filter == 'Midfielder' %}selected{% endif %}>Midfielder</option>
+            <option value="Defender" {% if position_filter == 'Defender' %}selected{% endif %}>Defender</option>
+            <option value="Goalkeeper" {% if position_filter == 'Goalkeeper' %}selected{% endif %}>Goalkeeper</option>
+        </select>
+    </div>
+
+    <button type="submit" class="btn btn-primary">Filter</button>
+</form>
+
+
+    <!-- Players List -->
     <div class="row">
         {% for player in players %}
         <div class="col-md-4 mb-4">
@@ -22,7 +44,7 @@
             </div>
         </div>
         {% empty %}
-        <p class="text-center">No players have registered yet.</p>
+        <p class="text-center">No players match your filters.</p>
         {% endfor %}
     </div>
 </div>

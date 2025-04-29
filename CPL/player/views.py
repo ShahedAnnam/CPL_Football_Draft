@@ -8,10 +8,26 @@ def dashboard(request):
     player = Player.objects.filter(user=request.user).first()
     return render(request, 'player/dashboard.html', {'player': player})
 
+
+
 @login_required
 def player_list(request):
+    batch_filter = request.GET.get('batch', None)
+    position_filter = request.GET.get('position', None)
+
     players = Player.objects.all()
-    return render(request, 'player/player_list.html', {'players': players})
+
+    if batch_filter:
+        players = players.filter(batch__icontains=batch_filter)  # use icontains for partial match and case-insensitive
+
+    if position_filter:
+        players = players.filter(playing_position=position_filter)
+
+    return render(request, 'player/player_list.html', {
+        'players': players,
+        'batch_filter': batch_filter,
+        'position_filter': position_filter
+    })
 
 @login_required
 def player_profile(request):
