@@ -26,12 +26,21 @@
                 <a href="{% url 'team:team_list' %}" class="dashboard-btn btn-success">View All Teams</a>
             </div>
 
+             <!-- All Players Card -->
+            <div class="dashboard-section border-success text-center">
+                <h5>See All Players</h5>
+                <p>Explore the list of registered players and their profiles.</p>
+                <a href="{% url 'player:player_list' %}" class="btn btn-success mt-2"
+                   style="padding: 10px 24px; border-radius: 10px; font-weight: 500;">
+                    View Player List
+                </a>
+            </div>
+
             <!-- Features Section -->
             <div class="dashboard-section border-dark">
                 <h5>Upcoming Features</h5>
                 <ul>
-                    <li>✔ Bid on Players</li>
-                    <li>✔ View Player List</li>
+                    <li>✔ Bid on Players</li> 
                     <li>✔ Team Stats</li>
                     <li>✔ Notifications</li>
                 </ul>

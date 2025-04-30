@@ -1,6 +1,7 @@
 from django.shortcuts import render, redirect
 from django.contrib.auth import login
 from django.contrib.auth.decorators import login_required
+from player.models import Player
 from .models import Team
 from .forms import TeamForm
 
@@ -34,3 +35,22 @@ def complete_profile(request):
 def team_list(request):
     teams = Team.objects.all()
     return render(request, 'team/team_list.html', {'teams': teams})
+
+@login_required
+def player_list(request):
+    batch_filter = request.GET.get('batch', None)
+    position_filter = request.GET.get('position', None)
+
+    players = Player.objects.all()
+
+    if batch_filter:
+        players = players.filter(batch__icontains=batch_filter)  # use icontains for partial match and case-insensitive
+
+    if position_filter:
+        players = players.filter(playing_position=position_filter)
+
+    return render(request, 'player/player_list.html', {
+        'players': players,
+        'batch_filter': batch_filter,
+        'position_filter': position_filter
+    })
