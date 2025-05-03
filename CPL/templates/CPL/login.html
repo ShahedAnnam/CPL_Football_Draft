@@ -4,16 +4,21 @@
 {% block title %}Login - CPL Football Draft{% endblock %}
 
 {% block head %}
-<link rel="stylesheet" href="{% static 'CPL/styleLogin.css' %}">
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="{% static 'CPL/styleLogin.css' %}">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
 {% endblock %}
 
 {% block content %}
 <div class="auth-wrapper">
+  <!-- Left Side - Image -->
+  <div class="auth-image">
+    <img src="{% static 'images/bid1.jpg' %}" alt="CPL Banner">
+  </div>
+
+  <!-- Right Side - Login Form -->
   <div class="auth-card">
-    <img src="{% static 'CPL/images/logo.png' %}" alt="CPL Logo" class="auth-logo">
     <h2>Login to your account</h2>
-    
+
     {% if messages %}
       <div class="error-message">
         {% for message in messages %}
@@ -31,7 +36,6 @@
 
     <form method="POST" novalidate>
       {% csrf_token %}
-
       <div class="form-group">
         <label for="id_username">Username</label>
         <input type="text" name="username" id="id_username" placeholder="Enter your username" required>
@@ -44,6 +48,7 @@
 
       <button type="submit" class="submit-btn">Login</button>
     </form>
+
     <p class="note">Don't have an account? <a href="{% url 'register' %}">Register here</a></p>
   </div>
 </div>

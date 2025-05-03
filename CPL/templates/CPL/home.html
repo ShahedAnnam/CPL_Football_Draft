@@ -1,44 +1,71 @@
-{% extends 'CPL/base.html' %}
+{% extends 'cpl/base.html' %}
 {% load static %}
 
-{% block title %}Home - CPL Football Draft{% endblock %}
-
-{% block head %}
-  <link rel="stylesheet" href="{% static 'CPL/styleHome.css' %}">
-{% endblock %}
-
 {% block content %}
+<link rel="stylesheet" href="{% static 'CPL/styleHome.css' %}">
+
 <div class="container">
-  <h1 class="main-heading">CPL Football Draft</h1>
+  <header>
+    <h1>CPL Football Draft</h1>
+    <p>Welcome to our bidding website</p>
+    <div class="auth-buttons">
+      <a href="{% url 'login' %}" class="btn login-btn">Login</a>
+      <a href="{% url 'register' %}" class="btn register-btn">Register</a>
+    </div>
+  </header>
 
-  <p class="intro-text">
-    Welcome to the official CPL Football Draft System. Manage registrations, player classifications, and team bids — all in one place.
-  </p>
+  <section class="stats">
+    <div class="stat-card">
+      <h3>Registered Players</h3>
+      <p>{{ player_count }}</p>
+    </div>
+    <div class="stat-card">
+      <h3>Registered Teams</h3>
+      <p>{{ team_count }}</p>
+    </div>
+    <div class="stat-card">
+      <h3>Next Bid Starts In</h3>
+      <div id="countdown"></div>
+    </div>
+  </section>
 
-  {% if messages %}
-  <div class="message-box">
-    {% for message in messages %}
-      <p>{{ message }}</p>
-    {% endfor %}
-  </div>
-  {% endif %}
-
-
-
-  <!-- Roles -->
-  <div class="role-section">
+  <section class="roles">
     <div class="role-card player-role">
+      <i class="icon-player"></i>
       <h3>Player</h3>
       <p>Register and get drafted to teams.</p>
     </div>
     <div class="role-card authority-role">
+      <i class="icon-authority"></i>
       <h3>Authority</h3>
       <p>Manage players and classifications.</p>
     </div>
     <div class="role-card owner-role">
+      <i class="icon-owner"></i>
       <h3>Team Owner</h3>
       <p>Bid for your desired players.</p>
     </div>
-  </div>
+  </section>
 </div>
+
+<script>
+  var countDownDate = new Date("May 10, 2025 15:00:00").getTime();
+  var x = setInterval(function() {
+    var now = new Date().getTime();
+    var distance = countDownDate - now;
+
+    var days = Math.floor(distance / (1000 * 60 * 60 * 24));
+    var hours = Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+    var minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
+    var seconds = Math.floor((distance % (1000 * 60)) / 1000);
+
+    document.getElementById("countdown").innerHTML =
+      days + "d " + hours + "h " + minutes + "m " + seconds + "s ";
+
+    if (distance < 0) {
+      clearInterval(x);
+      document.getElementById("countdown").innerHTML = "Bidding has started!";
+    }
+  }, 1000);
+</script>
 {% endblock %}
