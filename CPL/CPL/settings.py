@@ -42,6 +42,7 @@ INSTALLED_APPS = [
     'player',
     'team',
     'CPL',
+    'bidding',
 ]
 
 MIDDLEWARE = [

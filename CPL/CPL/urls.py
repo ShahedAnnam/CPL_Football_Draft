@@ -31,6 +31,8 @@ urlpatterns = [
     path('player/',include('player.urls', namespace='player')),
     path('authority/',include('authority.urls', namespace='authority')),
     path('team/',include('team.urls', namespace='team')),
+    path('bidding/',include('bidding.urls')),
+    
 ]
 
 
