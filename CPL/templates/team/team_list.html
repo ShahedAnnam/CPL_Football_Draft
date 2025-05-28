@@ -3,26 +3,147 @@
 
 {% block head %}
   <link rel="stylesheet" href="{% static 'team/styleTeam_list.css' %}">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;700&family=Playfair+Display:wght@700&display=swap" rel="stylesheet">
 {% endblock %}
 
 {% block content %}
-<div class="team-container">
-    <h1 class="page-title">Registered Teams</h1>
-    
-    {% for team in teams %}
-    <div class="team-card">
-        <div class="team-images">
-            <img class="team-logo" src="{{ team.logo.url }}" alt="{{ team.user.username }} Logo">
-            <img class="profile-pic" src="{{ team.profile_pic.url }}" alt="{{ team.user.username }} Profile Picture">
+<div class="elite-container">
+    <div class="elite-header">
+        <h1 class="elite-title">Football <span>Squads</span></h1>
+    </div>
+
+    <div class="team-grid">
+        {% for team in teams %}
+        <div class="team-card">
+            <!-- First Row: Logo, Name, Slogan -->
+            <div class="team-top-row">
+                <img src="{{ team.logo.url }}" class="team-logo" alt="{{ team.user.username }}">
+                <div class="team-info">
+                    <h2 class="team-name">{{ team.user.username }}</h2>
+                    <p class="team-slogan">"{{ team.slogan }}"</p>
+                </div>
+            </div>
+            
+            <!-- Second Row: Profile Pic and Squad -->
+            <div class="team-bottom-row">
+                <div class="team-profile">
+                    <img src="{{ team.profile_pic.url }}" class="profile-image" alt="{{ team.user.username }}">
+                </div>
+                
+                <div class="team-squad">
+                    <div class="squad-grid">
+                        {% for i in "123456789101112" %}
+                        <div class="player-avatar">
+                            <i class="fas fa-user"></i>
+                        </div>
+                        {% endfor %}
+                    </div>
+                    
+                    <button class="view-squad-btn" onclick="openModal('{{ team.user.username }}', '{{ team.logo.url }}')">
+                        <i class="fas fa-users"></i>
+                        <span>View Full Squad</span>
+                    </button>
+                </div>
+            </div>
         </div>
-        <div class="team-info">
-            <h2 class="team-name">{{ team.user.username }}</h2>
-            <p class="team-slogan">{{ team.slogan }}</p>
-            <a href="#" class="view-players-btn">View Players</a>
+        {% empty %}
+        <div class="empty-state">
+            <i class="fas fa-trophy"></i>
+            <h3>No Teams Registered</h3>
+        </div>
+        {% endfor %}
+    </div>
+</div>
+
+<!-- Modal -->
+<div class="elite-modal" id="squadModal">
+    <div class="modal-container">
+        <div class="modal-header">
+            <button class="modal-close" onclick="closeModal()">&times;</button>
+            <div class="modal-team">
+                <img src="" alt="Team Logo" class="modal-logo" id="modalTeamLogo">
+                <h2 class="modal-team-name" id="modalTeamName"></h2>
+            </div>
+        </div>
+
+        <div class="modal-body">
+            <div class="position-section">
+                <h3 class="section-title">
+                    <i class="fas fa-tshirt"></i>
+                    Goalkeepers
+                </h3>
+                <div class="player-list">
+                    <div class="empty-position">
+                        <i class="fas fa-user-slash"></i>
+                        <p>No goalkeepers signed yet</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="position-section">
+                <h3 class="section-title">
+                    <i class="fas fa-shield-alt"></i>
+                    Defenders
+                </h3>
+                <div class="player-list">
+                    <div class="empty-position">
+                        <i class="fas fa-user-slash"></i>
+                        <p>No defenders signed yet</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="position-section">
+                <h3 class="section-title">
+                    <i class="fas fa-compress-arrows-alt"></i>
+                    Midfielders
+                </h3>
+                <div class="player-list">
+                    <div class="empty-position">
+                        <i class="fas fa-user-slash"></i>
+                        <p>No midfielders signed yet</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="position-section">
+                <h3 class="section-title">
+                    <i class="fas fa-futbol"></i>
+                    Forwards
+                </h3>
+                <div class="player-list">
+                    <div class="empty-position">
+                        <i class="fas fa-user-slash"></i>
+                        <p>No forwards signed yet</p>
+                    </div>
+                </div>
+            </div>
         </div>
     </div>
-    {% empty %}
-    <p>No teams have registered yet.</p>
-    {% endfor %}
 </div>
+
+<script>
+    // Modal functions
+    function openModal(teamName, teamLogo) {
+        const modal = document.getElementById('squadModal');
+        document.getElementById('modalTeamName').textContent = teamName;
+        document.getElementById('modalTeamLogo').src = teamLogo;
+        modal.style.display = 'block';
+        document.body.style.overflow = 'hidden';
+    }
+    
+    function closeModal() {
+        document.getElementById('squadModal').style.display = 'none';
+        document.body.style.overflow = 'auto';
+    }
+    
+    // Close modal when clicking outside
+    window.addEventListener('click', function(event) {
+        const modal = document.getElementById('squadModal');
+        if (event.target === modal) {
+            closeModal();
+        }
+    });
+</script>
 {% endblock %}

@@ -1,79 +1,333 @@
+/* --- Global & Base Styles --- */
+body {
+    font-family: 'Source Sans 3', sans-serif; /* Modern, readable sans-serif */
+    color: #333;
+    line-height: 1.6;
+    margin: 0;
+    padding: 0;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    min-height: 100vh; /* Ensures body takes full height */
+
+    /* --- GORGEOUS PROFESSIONAL LIGHT BACKGROUND --- */
+    background-color: #eef2f7; /* Fallback base color */
+    background-image:
+        radial-gradient(circle at 10% 20%, rgba(240, 248, 255, 0.6) 0%, transparent 40%), /* Top-left subtle light glow */
+        radial-gradient(circle at 90% 80%, rgba(235, 245, 255, 0.5) 0%, transparent 40%), /* Bottom-right subtle light glow */
+        linear-gradient(135deg, #f7f9fc 0%, #eef2f7 50%, #e3e8f0 100%); /* Main, soft diagonal gradient */
+    background-repeat: no-repeat, no-repeat, no-repeat;
+    background-size: 80% 80%, 80% 80%, cover; /* Ensures main gradient covers entire viewport */
+    background-attachment: fixed; /* --- KEY CHANGE: Makes background fixed relative to viewport --- */
+}
+
 .dashboard-container {
-    padding: 40px;
+    max-width: 1300px; /* Limits the width of content */
+    margin: 60px auto; /* Centers the container horizontally */
+    padding: 0 30px; /* Prevents content from touching screen edges on smaller screens */
+    box-sizing: border-box; /* Ensures padding is included in the max-width */
+    overflow-x: hidden; /* Prevents horizontal scrollbar if anything inside attempts to overflow */
 }
 
-.dashboard-card {
-    background-color: #f8f9fa;
-    padding: 30px;
-    border-radius: 16px;
-    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.05);
-}
-
+/* --- Dashboard Titles --- */
 .dashboard-title {
-    font-size: 32px;
-    font-weight: bold;
+    font-family: 'Merriweather', serif; /* Elegant serif for main titles */
+    font-size: 3.5rem;
+    font-weight: 700;
+    color: #1e3a5f; /* Deep navy blue */
+    text-align: center;
     margin-bottom: 10px;
+    letter-spacing: -1px;
+    text-shadow: 2px 2px 5px rgba(0,0,0,0.1);
 }
 
-.dashboard-welcome {
-    font-size: 18px;
-    color: #555;
+.dashboard-subtitle {
+    font-size: 1.25rem;
+    color: #5b718c; /* Muted blue-grey */
+    text-align: center;
+    margin-bottom: 50px;
+    max-width: 800px;
+    margin-left: auto;
+    margin-right: auto;
+    line-height: 1.5;
 }
 
+/* --- Dashboard Grid Layout --- */
 .dashboard-grid {
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-    gap: 30px;
-    margin-top: 30px;
+    grid-template-columns: 2fr 3fr; /* Team Overview on left (2 parts), Actions on right (3 parts) */
+    gap: 30px; /* Space between the two main sections */
+    align-items: start; /* Align items to the start of their grid cell */
 }
 
-.dashboard-section {
-    padding: 20px;
-    border: 2px dashed #ccc;
-    border-radius: 12px;
-    background-color: #fff;
-    transition: transform 0.2s ease-in-out;
+/* --- Card Base Styling --- */
+.card {
+    background: linear-gradient(145deg, #ffffff, #f7f9fc); /* Subtle gradient for card background */
+    border-radius: 20px; /* More rounded corners */
+    box-shadow: 0 12px 30px rgba(0,0,0,0.08), inset 0 1px 0 rgba(255,255,255,0.7); /* Professional shadow & inner highlight */
+    padding: 35px;
+    border: 1px solid #e0e6ed;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
 }
 
-.dashboard-section:hover {
+.card:hover {
     transform: translateY(-5px);
+    box-shadow: 0 18px 45px rgba(0,0,0,0.12), inset 0 1px 0 rgba(255,255,255,0.9);
 }
 
-.dashboard-section h5 {
+.card-icon {
+    font-size: 3.5rem; /* Larger icons */
+    color: #6c5ce7; /* Purple for icons */
+    margin-bottom: 20px;
+    background: linear-gradient(45deg, #8a2be2, #a052e0); /* Icon background gradient */
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent; /* Makes icon color a gradient */
+    text-shadow: 0 5px 15px rgba(108, 92, 231, 0.4); /* Icon shadow */
+}
+
+.card-title {
+    font-family: 'Merriweather', serif;
+    font-size: 2rem;
+    font-weight: 700;
+    color: #1e3a5f;
+    margin-bottom: 25px;
+    letter-spacing: -0.5px;
+    text-shadow: 1px 1px 2px rgba(0,0,0,0.05);
+}
+
+/* --- Team Overview Specifics --- */
+.team-overview-card {
+    justify-content: space-between; /* Push button to bottom */
+}
+
+.team-details {
+    width: 100%; /* Take full width */
+    text-align: left;
+    margin-bottom: 30px;
+    padding: 0 15px;
+}
+
+.team-details p {
+    font-size: 1.1rem;
+    color: #4a5a6a;
+    margin-bottom: 12px;
+    display: flex;
+    justify-content: space-between; /* Align label and value */
+    padding-bottom: 8px;
+    border-bottom: 1px dashed rgba(200,200,200,0.4);
+}
+
+.team-details p:last-child {
+    margin-bottom: 0;
+    border-bottom: none;
+}
+
+.team-details strong {
     font-weight: 600;
-    font-size: 20px;
-    margin-bottom: 10px;
+    color: #34495e;
 }
 
-.dashboard-section ul {
-    padding-left: 20px;
-    margin-top: 10px;
+.detail-value {
+    font-family: 'Source Sans 3', sans-serif;
+    font-weight: 700;
+    color: #6c5ce7; /* Distinct color for values */
 }
 
-.dashboard-btn {
-    display: inline-block;
-    padding: 12px 20px;
-    border-radius: 8px;
+/* --- Card Button Styling --- */
+.card-button {
+    padding: 15px 30px;
+    border: none;
+    border-radius: 30px;
+    font-size: 1.05rem;
+    font-weight: 700;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
     text-decoration: none;
-    font-weight: 600;
-    margin-top: 12px;
-    transition: background-color 0.3s ease;
+    justify-content: center;
+    letter-spacing: 0.5px;
+    font-family: 'Source Sans 3', sans-serif;
+    width: 100%; /* Full width for the button */
+    max-width: 300px; /* Limit max width */
 }
 
-.btn-primary {
-    background-color: #007bff;
+.card-button.primary {
+    background: linear-gradient(45deg, #3498db, #2980b9); /* Blue gradient */
     color: white;
+    box-shadow: 0 6px 20px rgba(52, 152, 219, 0.4);
 }
 
-.btn-primary:hover {
-    background-color: #0056b3;
+.card-button.primary:hover {
+    background: linear-gradient(45deg, #2980b9, #2980b9);
+    transform: translateY(-3px);
+    box-shadow: 0 9px 25px rgba(52, 152, 219, 0.6);
 }
 
-.btn-success {
-    background-color: #28a745;
-    color: white;
+
+/* --- Quick Actions Grid Styling --- */
+.quick-actions-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); /* Responsive grid for action cards */
+    gap: 25px; /* Space between action cards */
 }
 
-.btn-success:hover {
-    background-color: #1c7e35;
+.action-card {
+    background: linear-gradient(145deg, #fcfdff, #eef2f7); /* Lighter gradient for action cards */
+    border-radius: 18px;
+    box-shadow: 0 8px 20px rgba(0,0,0,0.06);
+    padding: 25px;
+    text-align: center;
+    text-decoration: none;
+    color: inherit;
+    transition: transform 0.2s ease, box-shadow 0.2s ease, background 0.2s ease;
+    border: 1px solid #e7edf2;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+}
+
+.action-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 12px 25px rgba(0,0,0,0.12);
+    background: linear-gradient(145deg, #eef2f7, #fcfdff); /* Invert gradient on hover */
+}
+
+.action-icon {
+    font-size: 2.8rem;
+    color: #2ecc71; /* Green for action icons */
+    margin-bottom: 15px;
+    background: linear-gradient(45deg, #2ecc71, #27ae60);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    text-shadow: 0 3px 10px rgba(46, 204, 113, 0.3);
+}
+
+.action-card:hover .action-icon {
+    transform: scale(1.05);
+}
+
+.action-title {
+    font-family: 'Merriweather', serif;
+    font-size: 1.3rem;
+    font-weight: 700;
+    color: #1e3a5f;
+    margin-bottom: 8px;
+}
+
+.action-desc {
+    font-size: 0.9rem;
+    color: #666;
+    line-height: 1.4;
+}
+
+/* --- Disabled Link Styling --- */
+.disabled-link {
+    pointer-events: none; /* Disables click events */
+    opacity: 0.6; /* Visually dims the link */
+    cursor: not-allowed; /* Changes cursor to indicate non-interactiveness */
+    box-shadow: none; /* Removes shadow */
+    transform: none !important; /* Prevents hover transform */
+    background: linear-gradient(145deg, #d8dee9, #c3c7ce); /* Duller background */
+    border-color: #b0b4bb;
+}
+
+.disabled-link .action-icon {
+    filter: grayscale(100%); /* Desaturate icon */
+    opacity: 0.7;
+    background: none; /* Remove gradient from icon */
+    -webkit-text-fill-color: #8c98a5; /* Set specific muted color for icon */
+    text-shadow: none;
+}
+
+.disabled-link .action-title,
+.disabled-link .action-desc {
+    color: #8c98a5; /* Mute text color */
+}
+
+/* --- Responsive Adjustments --- */
+@media (max-width: 1024px) {
+    .dashboard-grid {
+        grid-template-columns: 1fr; /* Stack columns on smaller screens */
+    }
+    .team-overview-card {
+        padding: 30px;
+    }
+    .quick-actions-grid {
+        grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+    }
+}
+
+@media (max-width: 768px) {
+    .dashboard-title {
+        font-size: 2.8rem;
+    }
+    .dashboard-subtitle {
+        font-size: 1.1rem;
+        margin-bottom: 40px;
+    }
+    .card {
+        padding: 25px;
+        border-radius: 15px;
+    }
+    .card-icon {
+        font-size: 3rem;
+    }
+    .card-title {
+        font-size: 1.8rem;
+        margin-bottom: 20px;
+    }
+    .team-details p {
+        font-size: 1rem;
+    }
+    .card-button {
+        font-size: 0.95rem;
+        padding: 12px 25px;
+    }
+    .quick-actions-grid {
+        gap: 20px;
+    }
+    .action-icon {
+        font-size: 2.5rem;
+    }
+    .action-title {
+        font-size: 1.2rem;
+    }
+    .action-desc {
+        font-size: 0.85rem;
+    }
+}
+
+@media (max-width: 480px) {
+    .dashboard-container {
+        margin: 30px auto;
+        padding: 0 15px;
+    }
+    .dashboard-title {
+        font-size: 2.2rem;
+    }
+    .dashboard-subtitle {
+        font-size: 0.95rem;
+        margin-bottom: 30px;
+    }
+    .card {
+        padding: 20px;
+    }
+    .card-icon {
+        font-size: 2.5rem;
+    }
+    .card-title {
+        font-size: 1.5rem;
+    }
+    .quick-actions-grid {
+        grid-template-columns: 1fr; /* Stack actions on smallest screens */
+    }
+    .action-card {
+        padding: 20px;
+    }
 }

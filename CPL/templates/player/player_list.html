@@ -1,51 +1,113 @@
-{% extends 'CPL/base.html' %}
+{% extends 'cpl/base.html' %}
 {% load static %}
 
 {% block head %}
-<link rel="stylesheet" href="{% static 'player/stylePlayer_list.css' %}">
+    <link rel="stylesheet" href="{% static 'player/stylePlayer_list.css' %}">
+    <link href="https://fonts.googleapis.com/css2?family=Merriweather:wght@400;700&family=Roboto+Mono:wght@400;600&family=Source+Sans+3:wght@400;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" crossorigin="anonymous" referrerpolicy="no-referrer" />
 {% endblock %}
 
 {% block content %}
-<div class="container py-5">
-    <h2 class="mb-4 text-center">Registered Players</h2>
-    
-<!-- Filter Section -->
-<form method="GET" action="{% url 'player:player_list' %}" class="filter-form">
-    <div class="form-group">
-        <input type="text" name="batch" id="batch" class="form-control" placeholder="Search Batch..." value="{{ batch_filter|default_if_none:'' }}">
-    </div>
+<div class="player-list-container">
+    <h1 class="page-title">League's Elite Talent Pool</h1>
+    <p class="page-subtitle">Discover and filter through our impressive roster of players.</p>
 
-    <div class="form-group">
-        <select name="position" id="position" class="form-control">
-            <option value="">All Positions</option>
-            <option value="Forward" {% if position_filter == 'Forward' %}selected{% endif %}>Forward</option>
-            <option value="Midfielder" {% if position_filter == 'Midfielder' %}selected{% endif %}>Midfielder</option>
-            <option value="Defender" {% if position_filter == 'Defender' %}selected{% endif %}>Defender</option>
-            <option value="Goalkeeper" {% if position_filter == 'Goalkeeper' %}selected{% endif %}>Goalkeeper</option>
-        </select>
-    </div>
-
-    <button type="submit" class="btn btn-primary">Filter</button>
-</form>
-
-
-    <!-- Players List -->
-    <div class="row">
-        {% for player in players %}
-        <div class="col-md-4 mb-4">
-            <div class="card player-card h-100">
-                <img src="{{ player.profile_picture.url }}" class="card-img-top player-img" alt="{{ player.name }}">
-                <div class="card-body">
-                    <h5 class="card-title">{{ player.name }}</h5>
-                    <p class="card-text"><strong>Position:</strong> {{ player.playing_position }}</p>
-                    <p class="card-text"><strong>Batch:</strong> {{ player.batch }}</p>
-                    <p class="card-text"><strong>Assigned Team:</strong> {{ player.assigned_team }}</p>
+    <div class="filter-section elegant-filter">
+        <h2 class="filter-header">Tailor Your Player Search: Explore Our Comprehensive Filters to Identify Top Prospects</h2>
+        <form method="GET" action="{% url 'player:player_list' %}" class="filter-form">
+            <div class="filter-group">
+                <label for="batch-filter" class="filter-label"><i class="fas fa-calendar-alt"></i> Batch:</label>
+                <div class="custom-select-wrapper">
+                    <select id="batch-filter" name="batch" class="filter-select">
+                        <option value="">All Batche</option>
+                        {% for year in all_batches %}
+                            <option value="{{ year }}" {% if batch_filter|default_if_none:'' == year|stringformat:"d" %}selected{% endif %}>
+                                {{ year }}
+                            </option>
+                        {% endfor %}
+                    </select>
+                    <div class="select-arrow"><i class="fas fa-chevron-down"></i></div>
                 </div>
             </div>
-        </div>
-        {% empty %}
-        <p class="text-center">No players match your filters.</p>
-        {% endfor %}
+
+            <div class="filter-group">
+                <label for="position-filter" class="filter-label"><i class="fas fa-futbol"></i> Position:</label>
+                <div class="custom-select-wrapper">
+                    <select id="position-filter" name="position" class="filter-select">
+                        <option value="">All Position</option>
+                        {% for choice_value, choice_label in players.first.POSITION_CHOICES %}
+                            <option value="{{ choice_value }}" {% if position_filter == choice_value %}selected{% endif %}>
+                                {{ choice_label }}
+                            </option>
+                        {% endfor %}
+                    </select>
+                    <div class="select-arrow"><i class="fas fa-chevron-down"></i></div>
+                </div>
+            </div>
+
+            {# --- NEW: Class Filter as a Select Dropdown --- #}
+            <div class="filter-group">
+                <label for="class-filter" class="filter-label"><i class="fas fa-medal"></i> Class:</label> {# Using a medal icon for class #}
+                <div class="custom-select-wrapper">
+                    <select id="class-filter" name="player_class" class="filter-select">
+                        <option value="">All Class</option>
+                        {# Assuming Player.CLASS_CHOICES is available and correctly structured (e.g., [('A', 'Class A'), ('B', 'Class B'), ('C', 'Class C')]) #}
+                        {% for choice_value, choice_label in players.first.CLASS_CHOICES %}
+                            <option value="{{ choice_value }}" {% if class_filter == choice_value %}selected{% endif %}>
+                                {{ choice_label }}
+                            </option>
+                        {% endfor %}
+                    </select>
+                    <div class="select-arrow"><i class="fas fa-chevron-down"></i></div>
+                </div>
+            </div>
+            {# --- END NEW --- #}
+
+            <button type="submit" class="filter-button primary"><i class="fas fa-search"></i> Search</button>
+            <a href="{% url 'player:player_list' %}" class="filter-button secondary"><i class="fas fa-sync-alt"></i> Reset</a>
+        </form>
     </div>
+
+    {% if players %}
+        <div class="player-grid">
+            {% for player in players %}
+            <div class="player-card">
+                <div class="player-card-header">
+                    {% if player.profile_picture %}
+                        <img src="{{ player.profile_picture.url }}" alt="{{ player.name }} Profile" class="profile-picture">
+                    {% else %}
+                        <img src="{% static 'player/img/default_player_silhouette.svg' %}" alt="No Profile Picture" class="profile-picture default-profile-picture">
+                    {% endif %}
+                </div>
+                <div class="player-card-body">
+                    <h2 class="player-name">{{ player.name }}</h2>
+                    <p class="player-meta">
+                        <span class="detail-label">Position:</span>
+                        <span class="detail-value position-{{ player.playing_position|lower }}">{{ player.playing_position }}</span>
+                    </p>
+                    <p class="player-meta">
+                        <span class="detail-label">Batch:</span>
+                        <span class="detail-value">{{ player.batch }}</span>
+                    </p>
+                    <p class="player-team-status">
+                        <span class="detail-label">Team:</span>
+                        <span class="detail-value assigned-team-name {{ player.assigned_team|lower|slugify }}">{{ player.assigned_team }}</span>
+                    </p>
+                </div>
+                <div class="player-card-footer">
+                    <a href="{% url 'player:player_profile' %}?player_id={{ player.id }}" class="view-profile-button">
+                        View Profile <i class="fas fa-chevron-right"></i>
+                    </a>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+    {% else %}
+        <div class="no-players-found">
+            <i class="fas fa-frown no-players-icon"></i>
+            <p>No players found matching your criteria. Try adjusting your filters!</p>
+            <a href="{% url 'player:player_list' %}" class="filter-button primary">Show All Players</a>
+        </div>
+    {% endif %}
 </div>
 {% endblock %}

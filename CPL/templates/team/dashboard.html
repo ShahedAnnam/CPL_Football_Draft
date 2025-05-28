@@ -1,41 +1,55 @@
-{% extends 'CPL/base.html' %}
+{% extends 'cpl/base.html' %}
 {% load static %}
 
 {% block head %}
-  <link rel="stylesheet" href="{% static 'team/styleDashboard.css' %}">
+    <title>Team Dashboard</title>
+    <link rel="stylesheet" href="{% static 'team/styleDashboard.css' %}">
+    <link href="https://fonts.googleapis.com/css2?family=Merriweather:wght@400;700&family=Source+Sans+3:wght@400;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" integrity="sha512-..." crossorigin="anonymous" referrerpolicy="no-referrer" />
 {% endblock %}
 
 {% block content %}
 <div class="dashboard-container">
-    <div class="dashboard-card">
-        <h2 class="dashboard-title">Team Dashboard</h2>
-        <p class="dashboard-welcome">Welcome, <strong>{{ user.username }}</strong>!</p>
+    <h1 class="dashboard-title">Welcome, {{ request.user.username }}!</h1>
+    <p class="dashboard-subtitle">Your central hub for all team operations and league insights.</p>
 
-        <div class="dashboard-grid">
-            <!-- Team Profile Section -->
-            <div class="dashboard-section border-primary">
-                <h5>Complete Your Team Profile</h5>
-                <p>Fill in details like team name, logo, and slogan to complete registration.</p>
-                <a href="{% url 'team:complete_profile' %}" class="dashboard-btn btn-primary">Complete Team Profile</a>
+    <div class="dashboard-grid">
+        <div class="card team-overview-card">
+            <div class="card-icon"><i class="fas fa-users-cog"></i></div>
+            <h2 class="card-title">Team Overview</h2>
+            <div class="team-details">
+                <p><strong>Team Name:</strong> <span class="detail-value">{{ request.user.username }}</span></p>
+                <p><strong>Manager:</strong> <span class="detail-value">
+                    {{ team.manager_name|default:"Not Assigned Yet" }}
+                </span></p>
+                <p><strong>Current Budget:</strong> <span class="detail-value">${{ team.budget|default:"0" }}</span></p>
+                <p><strong>Players Signed:</strong> <span class="detail-value">{{ team.players_signed|default:"0" }} / 20</span></p>
             </div>
+            <a href="{% url 'team:complete_profile' %}" class="card-button primary">
+                <i class="fas fa-clipboard-list"></i> Complete Team Profile
+            </a>
+        </div>
 
-            <!-- View All Teams Section -->
-            <div class="dashboard-section border-success">
-                <h5>Explore Registered Teams</h5>
-                <p>Check out other teams and their details.</p>
-                <a href="{% url 'team:team_list' %}" class="dashboard-btn btn-success">View All Teams</a>
-            </div>
+        <div class="quick-actions-grid">
+            <a href="{% url 'team:team_list' %}" class="action-card">
+                <div class="action-icon"><i class="fas fa-shield-alt"></i></div>
+                <h3 class="action-title">View All Teams</h3>
+                <p class="action-desc">Explore your competition and league standings.</p>
+            </a>
 
-            <!-- Features Section -->
-            <div class="dashboard-section border-dark">
-                <h5>Upcoming Features</h5>
-                <ul>
-                    <li>✔ Bid on Players</li>
-                    <li>✔ View Player List</li>
-                    <li>✔ Team Stats</li>
-                    <li>✔ Notifications</li>
-                </ul>
-            </div>
+            <!-- Bidding card: No real URL yet -->
+            <a href="#" class="action-card disabled-link">
+                <div class="action-icon"><i class="fas fa-gavel"></i></div>
+                <h3 class="action-title">Bid on Players</h3>
+                <p class="action-desc">Coming Soon: Acquire new talent for your roster.</p>
+            </a>
+
+            <a href="{% url 'player:player_list' %}" class="action-card">
+                <div class="action-icon"><i class="fas fa-users"></i></div>
+                <h3 class="action-title">View Player List</h3>
+                <p class="action-desc">Browse all available players for the draft.</p>
+            </a>
+
         </div>
     </div>
 </div>
