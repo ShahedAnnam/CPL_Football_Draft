@@ -8,22 +8,25 @@
     {% block head %}{% endblock %}
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
     <link rel="stylesheet" href="{% static 'CPL/styleBase.css' %}">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
 </head>
 <body>
+
+    <!-- Navbar -->
     <nav class="cpl-navbar">
         <div class="cpl-navbar-brand-group">
             <img src="{% static 'CPL/logo.png' %}" alt="Logo" class="cpl-navbar-logo">
             <a class="cpl-navbar-brand" href="{% url 'home' %}">CPL Football Draft</a>
         </div>
         <ul class="cpl-navbar-links">
-            {% if user.is_authenticated %}
+            {% if user.is_authenticated and user.role %}
                 <li><a href="{% url 'home' %}">Home</a></li>
                 <li><a href="{% url user.role|add:':dashboard' %}">Dashboard</a></li>
                 <li><a href="{% url 'profile' %}">Profile</a></li>
                 <li>
                     <form action="{% url 'profile' %}" method="post" style="display:inline;">
                         {% csrf_token %}
-                        <button type="subsmit" name="logout" class="btn btn-link p-0 m-0 align-baseline" style="color: #c0c8d6; text-decoration: none;">
+                        <button type="submit" name="logout" class="btn btn-link p-0 m-0 align-baseline" style="color: #c0c8d6; text-decoration: none;">
                             Logout
                         </button>
                     </form>
@@ -33,12 +36,48 @@
             {% endif %}
         </ul>
     </nav>
-    
-    
 
-    <div class="container" style="padding-top: 100px;">
+    <!-- Main Content -->
+    <div class="container main-content">
         {% block content %}{% endblock %}
     </div>
+
+    <!-- Footer -->
+    <footer class="cpl-footer">
+        <div class="footer-columns">
+            <div class="footer-column">
+                <h5>Shahed Annam</h5>
+                <a href="https://www.facebook.com/shahed.fb" target="_blank"><i class="fab fa-facebook"></i></a>
+                <a href="https://www.linkedin.com/in/shahed-annam" target="_blank"><i class="fab fa-linkedin"></i></a>
+                <a href="https://github.com/shahedannam" target="_blank"><i class="fab fa-github"></i></a>
+                <a href="mailto:shahed@example.com"><i class="fas fa-envelope"></i></a>
+            </div>
+            <div class="footer-column">
+                <h5>Emon Hossain Pallas</h5>
+                <a href="#"><i class="fab fa-facebook"></i></a>
+                <a href="#"><i class="fab fa-linkedin"></i></a>
+                <a href="#"><i class="fab fa-github"></i></a>
+                <a href="#"><i class="fas fa-envelope"></i></a>
+            </div>
+            <div class="footer-column">
+                <h5>Mursalin Sarkar Nayeem</h5>
+                <a href="#"><i class="fab fa-facebook"></i></a>
+                <a href="#"><i class="fab fa-linkedin"></i></a>
+                <a href="#"><i class="fab fa-github"></i></a>
+                <a href="#"><i class="fas fa-envelope"></i></a>
+            </div>
+            <div class="footer-column">
+                <h5>Sourav Ahmed</h5>
+                <a href="#"><i class="fab fa-facebook"></i></a>
+                <a href="#"><i class="fab fa-linkedin"></i></a>
+                <a href="#"><i class="fab fa-github"></i></a>
+                <a href="#"><i class="fas fa-envelope"></i></a>
+            </div>
+        </div>
+        <div class="footer-bottom">
+            <p>&copy; 2025 CPL Football Draft. All rights reserved.</p>
+        </div>
+    </footer>
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 </body>

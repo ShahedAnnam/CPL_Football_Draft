@@ -1,0 +1,501 @@
+/* --- Global & Base Styles --- */
+body {
+    font-family: 'Source Sans 3', sans-serif; /* Modern, readable sans-serif */
+    background: #f0f4f8; /* Base light grey */
+    /* More professional, slightly textured background */
+    background-image:
+        radial-gradient(circle at top left, #e9eff5, transparent 50%), /* Subtle light corner glow */
+        radial-gradient(circle at bottom right, #dee4ea, transparent 50%), /* Another subtle light corner glow */
+        linear-gradient(to bottom right, #f0f4f8, #e7edf2); /* Main gradient */
+    background-repeat: no-repeat, no-repeat, no-repeat;
+    background-size: 80% 80%, 80% 80%, cover;
+    background-attachment: fixed;
+    color: #333;
+    line-height: 1.6;
+    margin: 0;
+    padding: 0;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    min-height: 100vh; /* Ensure body takes full height */
+}
+
+.player-list-container {
+    max-width: 1400px; /* Even wider container for more cards per row */
+    margin: 60px auto;
+    padding: 0 30px;
+}
+
+/* --- Page Titles --- */
+.page-title {
+    font-family: 'Merriweather', serif; /* Elegant serif for main titles */
+    font-size: 3.8rem;
+    font-weight: 700;
+    color: #1e3a5f; /* Deep navy blue */
+    text-align: center;
+    margin-bottom: 15px;
+    letter-spacing: -0.8px;
+    text-shadow: 2px 2px 5px rgba(0,0,0,0.15);
+}
+
+.page-subtitle {
+    font-size: 1.3rem;
+    color: #5b718c; /* Muted blue-grey */
+    text-align: center;
+    margin-bottom: 60px;
+    max-width: 900px;
+    margin-left: auto;
+    margin-right: auto;
+    line-height: 1.5;
+}
+
+/* --- Filter Section --- */
+.filter-section.elegant-filter {
+    background: linear-gradient(145deg, #fbfbfb, #eff3f7);
+    border-radius: 25px;
+    box-shadow: 0 15px 40px rgba(0,0,0,0.15), inset 0 2px 5px rgba(255,255,255,0.8);
+    padding: 35px;
+    margin-bottom: 50px;
+    display: flex;
+    flex-direction: column; /* Stack header and form */
+    align-items: center;
+    gap: 30px; /* Gap between header and form */
+    border: 1px solid #e0e6ed;
+    position: relative;
+    z-index: 10;
+}
+
+.filter-header {
+    font-family: 'Merriweather', serif;
+    font-size: 1.8rem;
+    font-weight: 700;
+    color: #34495e;
+    text-align: center;
+    margin-bottom: 15px; /* Space from form */
+    letter-spacing: -0.5px;
+    width: 100%; /* Take full width */
+    padding-bottom: 15px;
+    border-bottom: 1px solid #e0e6ed;
+}
+
+.filter-form {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 25px;
+    align-items: flex-end;
+    width: 100%;
+    justify-content: center;
+}
+
+.filter-group {
+    display: flex;
+    flex-direction: column;
+    flex-grow: 1;
+    min-width: 200px;
+    position: relative;
+}
+
+.filter-label {
+    font-size: 0.95rem;
+    color: #4a5a6a;
+    margin-bottom: 10px;
+    font-weight: 600;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-family: 'Source Sans 3', sans-serif;
+}
+
+.filter-label i {
+    color: #6c5ce7;
+}
+
+.filter-input,
+.filter-select {
+    appearance: none;
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    padding: 14px 18px;
+    border: 1px solid #dcdfe6;
+    border-radius: 12px;
+    font-family: 'Source Sans 3', sans-serif;
+    font-size: 1.05rem;
+    color: #333;
+    background-color: #fcfdff;
+    transition: all 0.3s ease;
+    box-shadow: inset 0 1px 3px rgba(0,0,0,0.05);
+    cursor: pointer;
+    background-image: linear-gradient(to bottom, #fcfdff, #f0f4f8);
+    width: 100%; /* Ensure select takes full width of wrapper */
+    box-sizing: border-box; /* Include padding and border in width */
+}
+
+.filter-input:focus,
+.filter-select:focus {
+    border-color: #6c5ce7;
+    box-shadow: 0 0 0 4px rgba(108, 92, 231, 0.2);
+    outline: none;
+    background-color: #ffffff;
+}
+
+.custom-select-wrapper {
+    position: relative;
+    display: block; /* Make it block to take full width */
+    width: 100%;
+}
+
+.select-arrow {
+    position: absolute;
+    top: 50%;
+    right: 18px; /* Slightly adjusted right for better appearance */
+    transform: translateY(-50%);
+    color: #8c98a5;
+    pointer-events: none; /* Allows clicks to pass through to the select */
+    transition: color 0.3s ease;
+}
+
+.filter-select:hover + .select-arrow,
+.filter-select:focus + .select-arrow {
+    color: #6c5ce7;
+}
+
+
+
+/* --- Filter Action Buttons --- */
+.filter-button {
+    padding: 15px 30px;
+    border: none;
+    border-radius: 30px;
+    font-size: 1.05rem;
+    font-weight: 700;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    text-decoration: none;
+    justify-content: center;
+    letter-spacing: 0.5px;
+    font-family: 'Source Sans 3', sans-serif;
+}
+
+.filter-button.primary {
+    background: linear-gradient(45deg, #6c5ce7, #8e44ad);
+    color: white;
+    box-shadow: 0 6px 20px rgba(108, 92, 231, 0.4);
+}
+
+.filter-button.primary:hover {
+    background: linear-gradient(45deg, #5c4cd9, #7b3d9c);
+    transform: translateY(-3px);
+    box-shadow: 0 9px 25px rgba(108, 92, 231, 0.6);
+}
+
+.filter-button.secondary {
+    background-color: #aeb6bf;
+    color: white;
+    box-shadow: 0 6px 20px rgba(174, 182, 191, 0.3);
+}
+
+.filter-button.secondary:hover {
+    background-color: #8c98a5;
+    transform: translateY(-3px);
+    box-shadow: 0 9px 25px rgba(174, 182, 191, 0.5);
+}
+
+/* --- Player Grid Layout --- */
+.player-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); /* Aim for 5-6 cards per row */
+    gap: 20px;
+}
+
+/* --- Player Card Styling --- */
+.player-card {
+    background: linear-gradient(145deg, #ffffff, #f7f9fc); /* Card background gradient */
+    border-radius: 15px;
+    box-shadow: 0 8px 25px rgba(0,0,0,0.08);
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+    text-decoration: none;
+    color: inherit;
+    transition: transform 0.2s ease-in-out, box-shadow 0.2s ease-in-out;
+    border: 1px solid #e0e6ed;
+    position: relative;
+    z-index: 1;
+}
+
+.player-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 12px 30px rgba(0,0,0,0.15);
+}
+
+.player-card-header {
+    background: linear-gradient(135deg, #4a90e2 0%, #6a67e0 100%);
+    padding: 10px 0;
+    text-align: center;
+    position: relative;
+}
+
+.profile-picture {
+    width: 90px; /* Slightly larger profile picture */
+    height: 90px;
+    border-radius: 50%;
+    object-fit: cover;
+    border: 4px solid rgba(255,255,255,0.9);
+    box-shadow: 0 0 0 3px rgba(106, 103, 224, 0.2), 0 2px 5px rgba(0,0,0,0.1);
+    display: block;
+    margin: 0 auto;
+    transition: transform 0.2s ease;
+}
+
+.player-card:hover .profile-picture {
+    transform: scale(1.05);
+}
+
+.default-profile-picture {
+    background-color: #e0e0e0;
+    padding: 5px;
+    object-fit: contain;
+}
+
+.player-card-body {
+    padding: 15px;
+    text-align: center;
+    flex-grow: 1;
+}
+
+.player-name {
+    font-family: 'Merriweather', serif;
+    font-size: 1.3rem;
+    font-weight: 700;
+    color: #1e3a5f;
+    margin-bottom: 8px;
+    line-height: 1.2;
+    text-shadow: 0 1px 2px rgba(0,0,0,0.03);
+}
+
+.player-meta {
+    font-size: 0.8rem;
+    color: #666;
+    margin-bottom: 6px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 8px;
+    flex-wrap: wrap;
+}
+
+.detail-label {
+    font-weight: 700;
+    color: #34495e;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    font-size: 0.75rem;
+    font-family: 'Source Sans 3', sans-serif;
+}
+
+.detail-value {
+    font-family: 'Roboto Mono', monospace;
+    font-weight: 600;
+    background-color: #eef2f5;
+    padding: 3px 8px;
+    border-radius: 5px;
+    color: #444;
+}
+
+
+/* Position specific styling */
+.position-midfielder .detail-value { color: #f39c12; }
+.position-goalkeeper .detail-value { color: #3498db; }
+.position-forward .detail-value { color: #e74c3c; }
+.position-defender .detail-value { color: #27ae60; }
+
+.player-team-status {
+    margin-top: 10px;
+    padding-top: 10px;
+    border-top: 1px dashed #eef2f5;
+}
+
+.assigned-team-name {
+    font-weight: 700;
+    color: #8e44ad;
+    font-size: 0.85rem;
+    display: inline-block;
+    padding: 3px 8px;
+    background-color: #f7f0fe;
+    border-radius: 5px;
+    font-family: 'Roboto Mono', monospace;
+}
+
+.assigned-team-not-bought-yet {
+    background-color: #ffeaa7;
+    color: #b8860b;
+}
+
+/* --- Player Card Footer (Button/Link) --- */
+.player-card-footer {
+    background-color: #fcfdff;
+    padding: 12px;
+    text-align: center;
+    border-top: 1px solid #eef2f5;
+}
+
+.view-profile-button {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    background: linear-gradient(45deg, #3498db, #2980b9);
+    color: white;
+    padding: 8px 18px;
+    border-radius: 20px;
+    text-decoration: none;
+    font-weight: 600;
+    font-size: 0.85rem;
+    box-shadow: 0 3px 10px rgba(52, 152, 219, 0.3);
+    transition: background 0.3s ease, transform 0.2s ease, box-shadow 0.3s ease;
+    border: none;
+    cursor: pointer;
+    font-family: 'Source Sans 3', sans-serif;
+}
+
+.view-profile-button:hover {
+    background: linear-gradient(45deg, #2980b9, #2980b9);
+    transform: translateY(-2px);
+    box-shadow: 0 5px 15px rgba(52, 152, 219, 0.5);
+}
+
+.view-profile-button i {
+    font-size: 0.9em;
+}
+
+/* --- No Players Found Message --- */
+.no-players-found {
+    text-align: center;
+    padding: 50px 20px;
+    background-color: #fff;
+    border-radius: 15px;
+    box-shadow: 0 8px 25px rgba(0,0,0,0.08);
+    margin-top: 40px;
+    color: #666;
+    font-size: 1.2rem;
+    border: 1px solid #e0e6ed;
+}
+
+.no-players-icon {
+    font-size: 3rem;
+    color: #ccc;
+    margin-bottom: 20px;
+}
+
+/* --- REMOVED MODAL STYLES --- */
+/* (All .modal-overlay, .modal-content, .modal-close-btn, etc. CSS rules are removed) */
+
+/* --- Responsive Adjustments --- */
+@media (max-width: 1200px) {
+    .player-grid {
+        grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    }
+}
+
+@media (max-width: 992px) {
+    .page-title {
+        font-size: 3rem;
+    }
+    .page-subtitle {
+        font-size: 1.15rem;
+        margin-bottom: 40px;
+    }
+    .filter-section.elegant-filter {
+        padding: 25px;
+        gap: 20px;
+    }
+    .filter-form {
+        flex-direction: column;
+        align-items: stretch;
+    }
+    .filter-group {
+        min-width: unset;
+        width: 100%;
+    }
+    .filter-button {
+        width: 100%;
+        margin-top: 10px;
+    }
+    .player-grid {
+        grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+        gap: 15px;
+    }
+    .profile-picture {
+        width: 80px;
+        height: 80px;
+    }
+    .player-name {
+        font-size: 1.2rem;
+    }
+    .player-meta, .player-team-status {
+        font-size: 0.75rem;
+    }
+    .view-profile-button {
+        font-size: 0.8rem;
+        padding: 6px 12px;
+    }
+}
+
+@media (max-width: 768px) {
+    .player-list-container {
+        margin: 40px auto;
+        padding: 0 20px;
+    }
+    .page-title {
+        font-size: 2.5rem;
+    }
+    .page-subtitle {
+        font-size: 1rem;
+        margin-bottom: 30px;
+    }
+    .filter-section.elegant-filter {
+        padding: 20px;
+    }
+    .player-grid {
+        grid-template-columns: 1fr;
+        max-width: 320px;
+        margin: auto;
+    }
+    .player-card {
+        padding: 10px;
+    }
+    .player-card-header {
+        padding: 8px 0;
+    }
+    .profile-picture {
+        width: 70px;
+        height: 70px;
+    }
+    .player-name {
+        font-size: 1.1rem;
+    }
+    .player-meta, .player-team-status {
+        font-size: 0.7rem;
+    }
+}
+
+@media (max-width: 480px) {
+    .page-title {
+        font-size: 2rem;
+    }
+    .page-subtitle {
+        font-size: 0.9rem;
+    }
+    .filter-input, .filter-select, .filter-button {
+        font-size: 0.9rem;
+        padding: 8px 10px;
+    }
+    .player-card {
+        border-radius: 10px;
+    }
+    .filter-header {
+        font-size: 1.4rem;
+        padding-bottom: 10px;
+    }
+}

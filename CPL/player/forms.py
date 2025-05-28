@@ -1,28 +1,17 @@
 from django import forms
-from django.contrib.auth.models import User
+from django.contrib.auth import get_user_model
 from .models import Player
 
-class PlayerRegistrationForm(forms.ModelForm):
-    password = forms.CharField(widget=forms.PasswordInput(attrs={'class': 'form-control'}))
-    
+User = get_user_model()  # Use your custom user model
+
+class PlayerProfileForm(forms.ModelForm):
     class Meta:
         model = Player
-        fields = ['name', 'gender', 'age', 'playing_position', 'batch']
+        fields = ['name', 'age', 'playing_position', 'batch', 'contact_number', 'profile_picture']
         widgets = {
-            'name': forms.TextInput(attrs={'class': 'form-control'}),
-            'gender': forms.Select(attrs={'class': 'form-control'}),
-            'age': forms.NumberInput(attrs={'class': 'form-control'}),
+            'name': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Your full name'}),
+            'age': forms.NumberInput(attrs={'class': 'form-control', 'placeholder': 'Your age'}),
             'playing_position': forms.Select(attrs={'class': 'form-control'}),
-            'batch': forms.TextInput(attrs={'class': 'form-control'}),
+            'batch': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'e.g. 48th'}),
+            'contact_number': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Your contact number'}),
         }
-
-    def save(self, commit=True):
-        player = super().save(commit=False)
-        user = User.objects.create_user(
-            username=self.cleaned_data['name'].lower().replace(" ", "_"),  # Auto-generate username
-            password=self.cleaned_data['password']
-        )
-        player.user = user
-        if commit:
-            player.save()
-        return player

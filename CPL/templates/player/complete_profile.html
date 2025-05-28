@@ -1,0 +1,32 @@
+{% extends 'CPL/base.html' %}
+{% load static %}
+
+{% block head %}
+<link rel="stylesheet" href="{% static 'player/styleComplete_profile.css' %}">
+{% endblock %}
+
+{% block content %}
+<div class="container complete-profile-container">
+    <div class="profile-card">
+        <h2 class="text-center mb-4">Complete Your Profile</h2>
+        <form method="POST" enctype="multipart/form-data">
+            {% csrf_token %}
+            {{ form.non_field_errors }}
+            {% for field in form %}
+                <div class="form-group mb-3">
+                    <label for="{{ field.id_for_label }}">{{ field.label }}</label>
+                    {{ field }}
+                    {% if field.errors %}
+                        <div class="form-error text-danger small">
+                            {{ field.errors|striptags }}
+                        </div>
+                    {% endif %}
+                </div>
+            {% endfor %}
+            <div class="text-center">
+                <button type="submit" class="btn submit-btn">Save</button>
+            </div>
+        </form>
+    </div>
+</div>
+{% endblock %}

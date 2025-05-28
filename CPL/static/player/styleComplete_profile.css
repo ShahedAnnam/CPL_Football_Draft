@@ -1,0 +1,44 @@
+.complete-profile-container {
+    max-width: 600px;
+    margin: 50px auto;
+    padding: 0 15px;
+}
+
+.profile-card {
+    background-color: #fff;
+    padding: 30px;
+    border-radius: 16px;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+}
+
+.profile-card h2 {
+    font-weight: 600;
+    color: #2c3e50;
+}
+
+.form-group label {
+    font-weight: 500;
+    color: #34495e;
+}
+
+.form-group input,
+.form-group select {
+    width: 100%;
+    padding: 10px 12px;
+    border-radius: 8px;
+    border: 1px solid #ccc;
+    background-color: #f9f9f9;
+}
+
+.submit-btn {
+    background-color: #3498db;
+    color: white;
+    padding: 10px 20px;
+    border-radius: 10px;
+    border: none;
+    transition: 0.3s ease;
+}
+
+.submit-btn:hover {
+    background-color: #2980b9;
+}

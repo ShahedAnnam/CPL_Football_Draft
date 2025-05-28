@@ -5,11 +5,18 @@ from .forms import CustomUserCreationForm
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.forms import PasswordChangeForm
 from django.contrib.auth import update_session_auth_hash
+from player.models import Player
+from team.models import Team
 
 
 
 def home(request):
-    return render(request, 'CPL/home.html')
+    player_count = Player.objects.count()
+    team_count = Team.objects.count()
+    return render(request, 'cpl/home.html', {
+        'player_count': player_count,
+        'team_count': team_count
+    })
 
 
 def login_view(request):

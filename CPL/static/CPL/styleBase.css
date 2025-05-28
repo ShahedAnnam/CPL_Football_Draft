@@ -1,11 +1,11 @@
-/* Custom Navbar */
+/* Navbar */
 .cpl-navbar {
     position: fixed;
     top: 0;
     left: 50%;
     transform: translateX(-50%);
     width: 90%;
-    z-index: 100;
+    z-index: 1000;
     background: linear-gradient(to right, #111827, #1f2937);
     color: #fff;
     padding: 0.6rem 2rem;
@@ -17,8 +17,6 @@
     box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
 }
 
-
-/* Logo + Brand Group */
 .cpl-navbar-brand-group {
     display: flex;
     align-items: center;
@@ -39,11 +37,12 @@
     letter-spacing: 1px;
 }
 
-/* Navbar Links */
 .cpl-navbar-links {
     display: flex;
     gap: 1rem;
     list-style: none;
+    margin: 0;
+    padding: 0;
 }
 
 .cpl-navbar-links li a {
@@ -58,17 +57,67 @@
     transform: translateY(-1px);
 }
 
-/* Responsive Fix */
+/* Fix floating page content */
+.main-content {
+    padding-top: 100px;
+    padding-bottom: 50px;
+    margin: 0 auto;
+    max-width: 1200px;
+}
+
+/* Keep navbar tight on mobile, but not stacked */
 @media (max-width: 768px) {
     .cpl-navbar {
-        padding: 0.4rem 1.2rem;
-        flex-direction: column;
-        align-items: flex-start;
+        padding: 0.4rem 1rem;
+    }
+
+    .cpl-navbar-brand {
+        font-size: 1rem;
     }
 
     .cpl-navbar-links {
-        margin-top: 0.4rem;
-        flex-direction: column;
         gap: 0.6rem;
     }
+
+    .cpl-navbar-links li a {
+        font-size: 0.8rem;
+    }
+}
+
+/* Footer */
+.cpl-footer {
+    background-color: #111827;
+    color: #c0c8d6;
+    padding: 2rem 1rem;
+    text-align: center;
+}
+
+.footer-columns {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+    gap: 1.5rem;
+    margin-bottom: 1.5rem;
+}
+
+.footer-column h5 {
+    color: #ffffff;
+    font-size: 1rem;
+    margin-bottom: 0.5rem;
+}
+
+.footer-column a {
+    color: #c0c8d6;
+    margin: 0 0.3rem;
+    font-size: 1.1rem;
+    transition: color 0.3s;
+}
+
+.footer-column a:hover {
+    color: #ffffff;
+}
+
+.footer-bottom p {
+    margin: 0;
+    font-size: 0.85rem;
+    color: #8a8f99;
 }

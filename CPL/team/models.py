@@ -3,7 +3,7 @@ from django.contrib.auth import get_user_model
 
 User = get_user_model()
 
-class TeamProfile(models.Model):
+class Team(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE)
     slogan = models.CharField(max_length=255)
     logo = models.ImageField(upload_to='team_logos/')

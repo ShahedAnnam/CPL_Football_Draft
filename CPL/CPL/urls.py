@@ -17,6 +17,8 @@ Including another URLconf
 from django.contrib import admin
 from django.urls import path,include
 from . import views
+from django.conf import settings
+from django.conf.urls.static import static
 
 urlpatterns = [
     path('admin/', admin.site.urls),
@@ -29,4 +31,11 @@ urlpatterns = [
     path('player/',include('player.urls', namespace='player')),
     path('authority/',include('authority.urls', namespace='authority')),
     path('team/',include('team.urls', namespace='team')),
+    path('bidding/',include('bidding.urls')),
+    
 ]
+
+
+
+if settings.DEBUG:
+    urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
