@@ -14,7 +14,7 @@ def show_cards(request):
     players = Player.objects.all()
     
     # Corrected timezone usage for start time
-    start_time = datetime(2025, 5, 4, 7, 43, 0, tzinfo=dt_timezone.utc)  # Example start time
+    start_time = datetime(2025, 5, 2, 3, 33, 0, tzinfo=dt_timezone.utc)  # Example start time
     
     # Get current server time
     current_server_time = timezone.now().isoformat()
