@@ -32,6 +32,7 @@ urlpatterns = [
     path('authority/',include('authority.urls', namespace='authority')),
     path('team/',include('team.urls', namespace='team')),
     path('bidding/',include('bidding.urls')),
+    #path('api/player-bid/<int:player_id>/', bidding.views.get_player_bid_data, name='get_player_bid_data'),
     
 ]
 

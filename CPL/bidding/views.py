@@ -26,20 +26,40 @@ def show_cards(request):
     })
 
 @csrf_exempt  # For test only; prefer @login_required + proper CSRF handling
+
 def place_bid(request):
     if request.method == "POST":
-        if not request.user.is_authenticated:
-            return JsonResponse({"message": "Unauthorized"}, status=401)
-
         data = json.loads(request.body)
         player_id = data.get("player_id")
 
         try:
             player = Player.objects.get(id=player_id)
-            player.assigned_team = f"Bid by {request.user.username}"
-            player.save()
-            return JsonResponse({"message": f"Bid placed on {player.name} by {request.user.username}"})
-        except Player.DoesNotExist:
-            return JsonResponse({"message": "Player not found"}, status=404)
 
-    return JsonResponse({"message": "Invalid request"}, status=400)
+            # Simulate bid logic
+            player.price += 100  # or whatever logic
+            player.assigned_team = f"{request.user.username}"  # or fetch from user/session
+            player.save()
+
+            return JsonResponse({
+                "success": True,
+                "message": "Bid placed successfully",
+                "assigned_team": player.assigned_team,
+                "price": player.price,
+            })
+        except Player.DoesNotExist:
+            return JsonResponse({"success": False, "message": "Player not found"}, status=404)
+
+    return JsonResponse({"success": False, "message": "Invalid request"}, status=400)
+
+
+
+def dopoll(request, player_id):
+    try:
+        player = Player.objects.get(id=player_id)
+        data = {
+            "assigned_team": player.assigned_team if player.assigned_team else "None",
+            "price": player.price if player.price else 0
+        }
+        return JsonResponse(data)
+    except Player.DoesNotExist:
+        return JsonResponse({"error": "Player not found"}, status=404)

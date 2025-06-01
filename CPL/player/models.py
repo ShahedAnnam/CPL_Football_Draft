@@ -19,6 +19,7 @@ class Player(models.Model):
     profile_picture = models.ImageField(upload_to='profile_pics/', blank=True, null=True)
     assigned_team = models.CharField(max_length=100, default="Not bought yet")
     registered_at = models.DateTimeField(auto_now_add=True)
+    price = models.IntegerField(default=100)
 
     def __str__(self):
         return f"{self.name} ({self.batch})"
