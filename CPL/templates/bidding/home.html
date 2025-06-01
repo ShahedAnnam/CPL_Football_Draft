@@ -42,7 +42,7 @@
   </head>
   <body>
     <div class="container mt-5">
-      <h1 class="text-center mb-4">Dynamic Player Cards</h1>
+      <h1 class="text-center mb-4">PLAYER BIDDING PAGE</h1>
 
       <div id="pre-bid-countdown"></div>
 
@@ -77,10 +77,11 @@
             <p id="price-{{ player.id }}" class="card-text">
               Last Bid Price: {{ player.price }}
             </p>
-
+            {% if user.is_authenticated and user.role == 'Team' %}
             <button class="btn btn-primary" onclick="placeBid({{ player.id }})">
               Place bid
             </button>
+            {% endif %}
           </div>
         </div>
         {% endfor %}
@@ -227,7 +228,7 @@
 
         if (!playerId) return;
 
-        fetch(`perform-short/${playerId}/`)// ✅ correct path
+        fetch(`perform-short/${playerId}/`) // ✅ correct path
           .then((response) => response.json())
           .then((data) => {
             const teamEl = document.getElementById(`assigned-team-${playerId}`);
@@ -244,7 +245,7 @@
           .catch((err) => console.error("Polling error:", err));
       }
 
-      setInterval(pollCurrentPlayerBid, 2000);
+      setInterval(pollCurrentPlayerBid, 500);
     </script>
   </body>
 </html>
