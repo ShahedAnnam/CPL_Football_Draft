@@ -1,253 +1,187 @@
 <!DOCTYPE html>
 <html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Dynamic Cards with Pre-Bid Countdown</title>
-    <link
-      href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css"
-      rel="stylesheet"
-    />
-    <style>
-      .card-wrapper {
-        display: none;
-        justify-content: center;
-      }
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Player Bidding</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet" />
+  <style>
+    .card-wrapper {
+      display: none;
+      justify-content: center;
+      flex-wrap: wrap;
+    }
 
-      .card-container {
-        max-width: 500px;
-        width: 100%;
-      }
+    .card-container {
+      max-width: 500px;
+      width: 100%;
+    }
 
-      .card img {
-        width: 100%;
-        aspect-ratio: 1 / 1;
-        object-fit: cover;
-      }
+    .card img {
+      width: 100%;
+      aspect-ratio: 1 / 1;
+      object-fit: cover;
+    }
 
-      #pre-bid-countdown {
-        font-size: 1.5rem;
-        font-weight: bold;
-        color: #dc3545;
-        text-align: center;
-      }
+    #pre-bid-countdown {
+      font-size: 1.5rem;
+      font-weight: bold;
+      color: #dc3545;
+      text-align: center;
+    }
 
-      #server-time {
-        font-size: 1rem;
-        font-weight: bold;
-        text-align: center;
-        margin-top: 20px;
-      }
-    </style>
-  </head>
-  <body>
-    <div class="container mt-5">
-      <h1 class="text-center mb-4">PLAYER BIDDING PAGE</h1>
+    #server-time {
+      font-size: 1rem;
+      font-weight: bold;
+      text-align: center;
+      margin-top: 20px;
+    }
+  </style>
+</head>
+<body>
+  <div class="container mt-5">
+    <h1 class="text-center mb-4">PLAYER BIDDING PAGE</h1>
 
-      <div id="pre-bid-countdown"></div>
+    <div id="pre-bid-countdown"></div>
 
-      <div id="cards-container" class="card-wrapper">
-        {% for player in players %}
-        <div
-          class="card-container card mb-4"
-          id="card-{{ forloop.counter }}"
-          data-player-id="{{ player.id }}"
-        >
-          <div class="card-body text-center">
-            <h5 class="card-title">{{ player.name }}</h5>
-            <p class="card-text">
-              Position: {{ player.get_playing_position_display }}
-            </p>
-            <p class="card-text">Age: {{ player.age }}</p>
-            <p class="card-text">Batch: {{ player.batch }}</p>
-            {% if player.profile_picture %}
-            <img
-              src="{{ player.profile_picture.url }}"
-              alt="Profile Picture"
-              class="img-fluid"
-            />
-            {% else %}
+    <div id="cards-container" class="card-wrapper">
+      {% for player in players %}
+      <div class="card-container card mb-4" id="card-{{ forloop.counter0 }}" data-player-id="{{ player.id }}">
+        <div class="card-body text-center">
+          <h5 class="card-title">{{ player.name }}</h5>
+          <p class="card-text">Position: {{ player.get_playing_position_display }}</p>
+          <p class="card-text">Age: {{ player.age }}</p>
+          <p class="card-text">Batch: {{ player.batch }}</p>
+          {% if player.profile_picture %}
+            <img src="{{ player.profile_picture.url }}" alt="Profile Picture" class="img-fluid" />
+          {% else %}
             <p>No profile picture</p>
-            {% endif %}
-            <p class="text-muted">
-              Card time remaining: <span class="timer">20</span> seconds
-            </p>
-            <p class="text-muted">
-              Total time since start: <span class="elapsed">0</span> seconds
-            </p>
-            <p id="assigned-team-{{ player.id }}" class="card-text">
-              Last Bid: {{ player.assigned_team }}
-            </p>
-            <p id="price-{{ player.id }}" class="card-text">
-              Last Bid Price: {{ player.price }}
-            </p>
+          {% endif %}
+          <p class="text-muted">Card time remaining: <span class="timer">20</span> seconds</p>
+          <p class="text-muted">Total time since start: <span class="elapsed">0</span> seconds</p>
+          <p id="assigned-team-{{ player.id }}" class="card-text">Last Bid: {{ player.assigned_team }}</p>
+          <p id="price-{{ player.id }}" class="card-text">Last Bid Price: {{ player.price }}</p>
 
-            {% if user.is_authenticated and user.role == 'team' %}
-            <button class="btn btn-primary" onclick="placeBid({{ player.id }})">
-              Place bid
-            </button>
-            {% endif %}
-          </div>
+          {% if user.is_authenticated and user.role == 'team' %}
+          <button class="btn btn-primary" onclick="placeBid({{ player.id }})">Place bid</button>
+          {% endif %}
         </div>
-        {% endfor %}
       </div>
-
-      <div id="server-time">
-        Server time:
-        <span id="server-time-span">{{ current_server_time }}</span>
-      </div>
+      {% endfor %}
     </div>
 
-    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-    <script>
-      const cards = document.querySelectorAll(".card-container");
-      const switchTime = 20;
-      const startTimeStr = "{{ start_time|escapejs }}";
-      const startTime = new Date(startTimeStr).getTime();
+    <div id="server-time">
+      Server time: <span id="server-time-span">{{ current_server_time }}</span>
+    </div>
+  </div>
 
-      const countdownDiv = document.getElementById("pre-bid-countdown");
-      const cardsContainer = document.getElementById("cards-container");
-      const serverTimeSpan = document.getElementById("server-time-span");
+  <script>
+    const cards = document.querySelectorAll(".card-container");
+    const switchTime = 20;
+    const startTime = new Date("{{ start_time|date:'c' }}").getTime();
+    const countdownDiv = document.getElementById("pre-bid-countdown");
+    const cardsContainer = document.getElementById("cards-container");
+    const serverTimeSpan = document.getElementById("server-time-span");
 
-      let countdownStarted = false;
-      let currentIndex = 0;
-      let totalElapsed = 0;
+    let countdownStarted = false;
 
-      function showCard(index) {
-        cards.forEach((card) => (card.style.display = "none"));
-        if (cards[index]) {
-          cards[index].style.display = "block";
-        }
+    function showCard(index) {
+      cards.forEach(card => card.style.display = "none");
+      if (cards[index]) {
+        cards[index].style.display = "block";
+      }
+    }
+
+    function updateCardState(serverTimestamp) {
+      const elapsed = Math.floor((serverTimestamp - startTime) / 1000);
+
+      if (elapsed < 0) {
+        countdownDiv.textContent = `Bidding starts in ${-elapsed} second${-elapsed !== 1 ? "s" : ""}...`;
+        cardsContainer.style.display = "none";
+        return;
       }
 
-      function updateTimerDisplay(seconds, elapsed) {
-        const timerSpan = cards[currentIndex]?.querySelector(".timer");
-        const elapsedSpan = cards[currentIndex]?.querySelector(".elapsed");
-        if (timerSpan) timerSpan.textContent = seconds;
-        if (elapsedSpan) elapsedSpan.textContent = elapsed;
-      }
+      countdownDiv.style.display = "none";
+      cardsContainer.style.display = "flex";
 
-      function startUniversalCountdown(initialElapsed) {
-        totalElapsed = initialElapsed;
-        currentIndex = Math.floor(totalElapsed / switchTime) % cards.length;
-        let countdown = switchTime - (totalElapsed % switchTime);
+      const cardIndex = Math.floor(elapsed / switchTime) % cards.length;
+      const countdown = switchTime - (elapsed % switchTime);
 
-        showCard(currentIndex);
-        updateTimerDisplay(countdown, totalElapsed);
+      showCard(cardIndex);
 
-        setInterval(() => {
-          countdown--;
-          totalElapsed++;
+      const timerSpan = cards[cardIndex]?.querySelector(".timer");
+      const elapsedSpan = cards[cardIndex]?.querySelector(".elapsed");
 
-          if (countdown <= 0) {
-            currentIndex = (currentIndex + 1) % cards.length;
-            countdown = switchTime;
-            showCard(currentIndex);
-          }
+      if (timerSpan) timerSpan.textContent = countdown;
+      if (elapsedSpan) elapsedSpan.textContent = elapsed;
+    }
 
-          updateTimerDisplay(countdown, totalElapsed);
-        }, 1000);
-      }
-
-      setInterval(() => {
-        const now = new Date().getTime();
-        const secondsToStart = Math.floor((startTime - now) / 1000);
-
-        const serverTime = new Date().toISOString();
-        serverTimeSpan.textContent = serverTime;
-
-        if (!countdownStarted) {
-          if (secondsToStart <= 0) {
-            countdownStarted = true;
-            countdownDiv.style.display = "none";
-            cardsContainer.style.display = "flex";
-
-            const initialElapsed = Math.max(
-              0,
-              Math.floor((now - startTime) / 1000)
-            );
-            startUniversalCountdown(initialElapsed);
-          } else {
-            countdownDiv.textContent = `Bidding starts in ${secondsToStart} second${
-              secondsToStart !== 1 ? "s" : ""
-            }...`;
-          }
-        }
-      }, 1000);
-
-      function placeBid(playerId) {
-        fetch("place-bid/", {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-            "X-CSRFToken": getCookie("csrftoken"),
-          },
-          body: JSON.stringify({ player_id: playerId }),
+    function syncWithServer() {
+      fetch("server-time/")
+        .then(res => res.json())
+        .then(data => {
+          const serverTimeStr = data.server_time;
+          const serverTime = new Date(serverTimeStr).getTime();
+          serverTimeSpan.textContent = serverTimeStr;
+          updateCardState(serverTime);
         })
-          .then((response) => response.json())
-          .then((data) => {
-            if (data.success) {
-              // Update UI
-              const teamEl = document.getElementById(
-                `assigned-team-${playerId}`
-              );
-              const priceEl = document.getElementById(`price-${playerId}`);
+        .catch(err => console.error("Time sync error:", err));
+    }
 
-              if (teamEl)
-                teamEl.textContent = `Last Bid: ${data.assigned_team}`;
-              if (priceEl)
-                priceEl.textContent = `Last Bid Price: ${data.price}`;
-            } else {
-              alert(data.message || "Bid failed");
-            }
-          })
-          .catch((error) => {
-            console.error("Error:", error);
-          });
-      }
-
-      // Get CSRF token from cookies
-      function getCookie(name) {
-        let cookieValue = null;
-        if (document.cookie && document.cookie !== "") {
-          const cookies = document.cookie.split(";");
-          for (let i = 0; i < cookies.length; i++) {
-            const cookie = cookies[i].trim();
-            if (cookie.substring(0, name.length + 1) === name + "=") {
-              cookieValue = decodeURIComponent(
-                cookie.substring(name.length + 1)
-              );
-              break;
-            }
-          }
-        }
-        return cookieValue;
-      }
-
-      function pollCurrentPlayerBid() {
-        const currentCard = cards[currentIndex];
-        const playerId = currentCard?.dataset.playerId;
-
-        if (!playerId) return;
-
-        fetch(`perform-short/${playerId}/`)
-          .then((response) => response.json())
-          .then((data) => {
+    function placeBid(playerId) {
+      fetch("place-bid/", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          "X-CSRFToken": getCookie("csrftoken"),
+        },
+        body: JSON.stringify({ player_id: playerId }),
+      })
+        .then(res => res.json())
+        .then(data => {
+          if (data.success) {
             const teamEl = document.getElementById(`assigned-team-${playerId}`);
             const priceEl = document.getElementById(`price-${playerId}`);
+            if (teamEl) teamEl.textContent = `Last Bid: ${data.assigned_team}`;
+            if (priceEl) priceEl.textContent = `Last Bid Price: ${data.price}`;
+          } else {
+            alert(data.message || "Bid failed");
+          }
+        })
+        .catch(error => {
+          console.error("Error placing bid:", error);
+        });
+    }
 
-            if (data.assigned_team && teamEl) {
-              teamEl.textContent = `Last Bid: ${data.assigned_team}`;
-            }
+    function pollCurrentPlayerBid() {
+      const visibleCard = Array.from(cards).find(card => card.style.display !== "none");
+      if (!visibleCard) return;
 
-            if (data.price !== undefined && priceEl) {
-              priceEl.textContent = `Last Bid Price: ${data.price}`;
-            }
-          })
-          .catch((err) => console.error("Polling error:", err));
-      }
+      const playerId = visibleCard.dataset.playerId;
 
-      setInterval(pollCurrentPlayerBid, 500);
-    </script>
-  </body>
+      fetch(`perform-short/${playerId}/`)
+        .then(res => res.json())
+        .then(data => {
+          const teamEl = document.getElementById(`assigned-team-${playerId}`);
+          const priceEl = document.getElementById(`price-${playerId}`);
+          if (data.assigned_team && teamEl) {
+            teamEl.textContent = `Last Bid: ${data.assigned_team}`;
+          }
+          if (data.price !== undefined && priceEl) {
+            priceEl.textContent = `Last Bid Price: ${data.price}`;
+          }
+        })
+        .catch(err => console.error("Polling error:", err));
+    }
+
+    function getCookie(name) {
+      const value = `; ${document.cookie}`;
+      const parts = value.split(`; ${name}=`);
+      if (parts.length === 2) return decodeURIComponent(parts.pop().split(';').shift());
+    }
+
+    setInterval(syncWithServer, 1000);
+    setInterval(pollCurrentPlayerBid, 500);
+  </script>
+</body>
 </html>
