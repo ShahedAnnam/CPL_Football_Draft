@@ -12,7 +12,7 @@ from django.shortcuts import render, get_object_or_404
 from django.http import JsonResponse, HttpResponseBadRequest
 from django.views.decorators.csrf import csrf_exempt
 from django.utils.timezone import now
-
+from bidding.models import AuctionSettings
 
 # Hardcoded or configurable START TIME
 from django.utils.timezone import datetime, timedelta
@@ -62,10 +62,20 @@ def perform_short(request, player_id):
     
 from datetime import datetime, timedelta, timezone
 
-AUCTION_START_TIME = datetime(2025, 6, 9, 19, 28, 0, tzinfo=timezone.utc)
+AUCTION_START_TIME = datetime(2025, 6, 9, 21, 58, 0, tzinfo=timezone.utc)
 PLAYER_DURATION = timedelta(seconds=20)
 
 def get_current_player_info():
+    settings = AuctionSettings.objects.first()
+    if settings:
+        AUCTION_START_TIME = settings.auction_start_time
+        PLAYER_DURATION = settings.player_duration
+    else:
+        AUCTION_START_TIME = datetime(2025, 6, 9, 19, 28, 0, tzinfo=timezone.utc)
+        PLAYER_DURATION = timedelta(seconds=20)
+    
+    print(AUCTION_START_TIME);
+    
     now = datetime.now(timezone.utc)
     players = Player.objects.all().order_by('id')
     total_players = players.count()
