@@ -1,0 +1,32 @@
+[33m6039192[m[33m ([m[1;36mHEAD[m[33m -> [m[1;32mSHD[m[33m)[m Resolved db.sqlite3 conflict using local version
+[33md097af9[m[33m ([m[1;31morigin/SHD[m[33m)[m Remove pyc files to resolve merge conflict quickly
+[33mac42030[m[33m ([m[1;31morigin/main[m[33m, [m[1;32mmain[m[33m)[m Save work before switching to SHD
+[33m216ef3c[m update style of dashboard,player list,team list
+[33mca7c573[m added place bid button
+[33m6cb89b1[m Merge pull request #8 from ShahedAnnam/MSN
+[33m558a680[m bidding page player slide
+[33mfbc4eae[m Merge pull request #7 from ShahedAnnam/SHD
+[33m200e2be[m desing homepage and login page style
+[33m276a444[m Save progress before checking MSN
+[33m50020fe[m Save progress before checking mursalin_b1
+[33meeb4ba5[m[33m ([m[1;31morigin/msn2[m[33m)[m solved invalid message showing while login
+[33m9bc43f5[m Showing invalid message while login
+[33m76b9cb9[m filter added
+[33m309052c[m filter
+[33m72e2591[m Merge pull request #5 from ShahedAnnam/SHD
+[33m0085542[m change in player app, create player profile,list,view,model
+[33mf99a68a[m Merge pull request #4 from ShahedAnnam/SHD
+[33m5b4a5cb[m create media folder,team list
+[33m159c630[m Merge pull request #3 from ShahedAnnam/SA
+[33m7574d47[m change database
+[33m740d10b[m update player app, create new html files
+[33m0329eb5[m Merge pull request #2 from ShahedAnnam/SHD
+[33m54caf21[m Merge branch 'SHD' of https://github.com/ShahedAnnam/CPL_Football_Draft into SHD
+[33m01d5a0f[m separate login page, update dashboard
+[33m9c5a60c[m separate login page, update dashboard page
+[33md68101d[m Merge pull request #1 from ShahedAnnam/EHP
+[33m0fc72fa[m Your commit message
+[33me8e6bc2[m add complete team profile, update navbar with profile view option and logout facitly, add some css for user register page
+[33m7ab441c[m add centralize user authentication, create home page, and dashboard for every app
+[33m7f33045[m First upload of the project
+[33m1e550eb[m Initial commit
