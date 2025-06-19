@@ -20,6 +20,13 @@ class Player(models.Model):
     assigned_team = models.CharField(max_length=100, default="Not bought yet")
     registered_at = models.DateTimeField(auto_now_add=True)
     current_price = models.IntegerField(default=0)
+    CATEGORY_CHOICES = [
+        ('A', 'Category A'),
+        ('B', 'Category B'),
+        ('C', 'Category C'),
+    ]
+    player_class = models.CharField(max_length=1, choices=CATEGORY_CHOICES, blank=True, null=True)
+
 
 
     def __str__(self):

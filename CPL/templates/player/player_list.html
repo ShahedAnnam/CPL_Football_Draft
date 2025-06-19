@@ -47,20 +47,19 @@
 
             {# --- NEW: Class Filter as a Select Dropdown --- #}
             <div class="filter-group">
-                <label for="class-filter" class="filter-label"><i class="fas fa-medal"></i> Class:</label> {# Using a medal icon for class #}
-                <div class="custom-select-wrapper">
-                    <select id="class-filter" name="player_class" class="filter-select">
-                        <option value="">All Class</option>
-                        {# Assuming Player.CLASS_CHOICES is available and correctly structured (e.g., [('A', 'Class A'), ('B', 'Class B'), ('C', 'Class C')]) #}
-                        {% for choice_value, choice_label in players.first.CLASS_CHOICES %}
-                            <option value="{{ choice_value }}" {% if class_filter == choice_value %}selected{% endif %}>
-                                {{ choice_label }}
-                            </option>
-                        {% endfor %}
-                    </select>
-                    <div class="select-arrow"><i class="fas fa-chevron-down"></i></div>
-                </div>
-            </div>
+    <label for="category-filter" class="filter-label"><i class="fas fa-medal"></i> Category:</label>
+    <div class="custom-select-wrapper">
+        <select id="category-filter" name="player_category" class="filter-select">
+            <option value="">All Categories</option>
+            {% for choice_value, choice_label in category_choices %}
+                <option value="{{ choice_value }}" {% if category_filter == choice_value %}selected{% endif %}>
+                    {{ choice_label }}
+                </option>
+            {% endfor %}
+        </select>
+        <div class="select-arrow"><i class="fas fa-chevron-down"></i></div>
+    </div>
+</div>
             {# --- END NEW --- #}
 
             <button type="submit" class="filter-button primary"><i class="fas fa-search"></i> Search</button>
@@ -95,9 +94,10 @@
                     </p>
                 </div>
                 <div class="player-card-footer">
-                    <a href="{% url 'player:player_profile' %}?player_id={{ player.id }}" class="view-profile-button">
-                        View Profile <i class="fas fa-chevron-right"></i>
-                    </a>
+                    <a href="{% url 'player:player_profile' player.id %}" class="view-profile-button">
+    View Profile <i class="fas fa-chevron-right"></i>
+</a>
+
                 </div>
             </div>
             {% endfor %}

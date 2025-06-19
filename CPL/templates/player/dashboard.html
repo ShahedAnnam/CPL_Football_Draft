@@ -37,7 +37,7 @@
             <div class="dashboard-section border-warning text-center">
                 <h5>My Profile</h5>
                 <p>Check your submitted details and update if needed.</p>
-                <a href="{% url 'player:player_profile' %}" class="btn btn-warning mt-2"
+                <a href="{% url 'player:player_profile' player.id %}" class="btn btn-warning mt-2"
                    style="padding: 10px 24px; border-radius: 10px; font-weight: 500;">
                     View My Profile
                 </a>
