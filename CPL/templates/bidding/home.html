@@ -3,33 +3,38 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<<<<<<< HEAD
   <title>Player Bidding</title>
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet" />
+=======
+  <title>Live Bidding Cards</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet"/>
+  
+  <!-- CSRF Token for AJAX -->
+  <meta name="csrf-token" content="{{ csrf_token }}">
+
+>>>>>>> SHD
   <style>
     .card-wrapper {
       display: none;
       justify-content: center;
       flex-wrap: wrap;
     }
-
     .card-container {
       max-width: 500px;
       width: 100%;
     }
-
     .card img {
       width: 100%;
       aspect-ratio: 1 / 1;
       object-fit: cover;
     }
-
     #pre-bid-countdown {
       font-size: 1.5rem;
       font-weight: bold;
       color: #dc3545;
       text-align: center;
     }
-
     #server-time {
       font-size: 1rem;
       font-weight: bold;
@@ -39,13 +44,27 @@
   </style>
 </head>
 <body>
+<<<<<<< HEAD
   <div class="container mt-5">
     <h1 class="text-center mb-4">PLAYER BIDDING PAGE</h1>
 
+=======
+  <h1 class="text-center text-info">
+    {% if user.is_authenticated %}
+      Your role: {{ user.role }}
+    {% else %}
+      You are not logged in.
+    {% endif %}
+  </h1>
+
+  <div class="container mt-5">
+    <h1 class="text-center mb-4">Dynamic Player Cards</h1>
+>>>>>>> SHD
     <div id="pre-bid-countdown"></div>
 
     <div id="cards-container" class="card-wrapper">
       {% for player in players %}
+<<<<<<< HEAD
       <div class="card-container card mb-4" id="card-{{ forloop.counter0 }}" data-player-id="{{ player.id }}">
         <div class="card-body text-center">
           <h5 class="card-title">{{ player.name }}</h5>
@@ -67,6 +86,28 @@
           {% endif %}
         </div>
       </div>
+=======
+        <div class="card-container card mb-4" id="card-{{ forloop.counter }}" data-player-id="{{ player.id }}">
+          <div class="card-body text-center">
+            <h5 class="card-title">{{ player.name }}</h5>
+            <p class="card-text">Position: {{ player.get_playing_position_display }}</p>
+            <p class="card-text">Age: {{ player.age }}</p>
+            <p class="card-text">Batch: {{ player.batch }}</p>
+            <p class="card-text">Assigned Team: <span class="assigned-team">{{ player.assigned_team }}</span></p>
+            <p class="card-text">Current Price: <span class="current-price">{{ player.current_price }}</span></p>
+            {% if player.profile_picture %}
+              <img src="{{ player.profile_picture.url }}" alt="Profile Picture" class="img-fluid"/>
+            {% else %}
+              <p>No profile picture</p>
+            {% endif %}
+            {% if user.is_authenticated and user.role == 'team' %}
+              <button class="btn btn-primary mt-2 place-bid-btn" data-player-id="{{ player.id }}">Place Bid</button>
+            {% endif %}
+            <p class="text-muted">Card time remaining: <span class="timer">20</span> seconds</p>
+            <p class="text-muted">Total time since start: <span class="elapsed">0</span> seconds</p>
+          </div>
+        </div>
+>>>>>>> SHD
       {% endfor %}
     </div>
 
@@ -75,6 +116,7 @@
     </div>
   </div>
 
+<<<<<<< HEAD
   <script>
     const cards = document.querySelectorAll(".card-container");
     const switchTime = 20;
@@ -182,6 +224,107 @@
 
     setInterval(syncWithServer, 1000);
     setInterval(pollCurrentPlayerBid, 500);
+=======
+  <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+  <script>
+    const cards = document.querySelectorAll('.card-container');
+    const switchTime = 20;
+    const startTimeStr = "{{ start_time|escapejs }}";
+    const startTime = new Date(startTimeStr).getTime();
+    const countdownDiv = document.getElementById('pre-bid-countdown');
+    const cardsContainer = document.getElementById('cards-container');
+    const serverTimeSpan = document.getElementById('server-time-span');
+    let countdownStarted = false;
+    let currentIndex = 0;
+    let totalElapsed = 0;
+
+    function showCard(index) {
+      cards.forEach(card => card.style.display = 'none');
+      if (cards[index]) {
+        cards[index].style.display = 'block';
+      }
+    }
+
+    function updateTimerDisplay(seconds, elapsed) {
+      const timerSpan = cards[currentIndex]?.querySelector('.timer');
+      const elapsedSpan = cards[currentIndex]?.querySelector('.elapsed');
+      if (timerSpan) timerSpan.textContent = seconds;
+      if (elapsedSpan) elapsedSpan.textContent = elapsed;
+    }
+
+    function startUniversalCountdown(initialElapsed) {
+      totalElapsed = initialElapsed;
+      currentIndex = Math.floor(totalElapsed / switchTime) % cards.length;
+      let countdown = switchTime - (totalElapsed % switchTime);
+
+      showCard(currentIndex);
+      updateTimerDisplay(countdown, totalElapsed);
+
+      setInterval(() => {
+        countdown--;
+        totalElapsed++;
+        if (countdown <= 0) {
+          currentIndex = (currentIndex + 1) % cards.length;
+          countdown = switchTime;
+          showCard(currentIndex);
+        }
+        updateTimerDisplay(countdown, totalElapsed);
+      }, 1000);
+    }
+
+    setInterval(() => {
+      const now = new Date().getTime();
+      const secondsToStart = Math.floor((startTime - now) / 1000);
+      const serverTime = new Date().toISOString();
+      serverTimeSpan.textContent = serverTime;
+
+      if (!countdownStarted && secondsToStart <= 0) {
+        countdownStarted = true;
+        countdownDiv.style.display = 'none';
+        cardsContainer.style.display = 'flex';
+        const initialElapsed = Math.max(0, Math.floor((now - startTime) / 1000));
+        startUniversalCountdown(initialElapsed);
+      } else if (!countdownStarted) {
+        countdownDiv.textContent = `Bidding starts in ${secondsToStart} second${secondsToStart !== 1 ? 's' : ''}...`;
+      }
+    }, 1000);
+
+    // Periodically poll other cards to update them
+    setInterval(() => {
+      $('.card-container').each(function() {
+        const card = $(this);
+        const playerId = card.data('player-id');
+        $.get(`/bidding/api/player/${playerId}/`, function(data) {
+          card.find('.current-price').text(data.current_price);
+          card.find('.assigned-team').text(data.assigned_team);
+        });
+      });
+    }, 2000);
+
+    // CSRF Setup for AJAX POSTs
+    const csrftoken = document.querySelector('[name=csrf-token]').content;
+    $.ajaxSetup({
+      headers: {
+        'X-CSRFToken': csrftoken
+      }
+    });
+
+    // Place Bid Button Click
+    $(document).on('click', '.place-bid-btn', function() {
+      const button = $(this);
+      const card = button.closest('.card-container');
+      const playerId = button.data('player-id');
+
+      $.post(`/bidding/assign/${playerId}/`, function(data) {
+        card.find('.current-price').text(data.current_price);
+        card.find('.assigned-team').text(data.assigned_team);
+      }).fail(function(xhr, status, error) {
+        console.error('Bid Failed:', status, error);
+        console.error('Response:', xhr.responseText);
+        alert('Failed to place bid. Please try again.');
+      });
+    });
+>>>>>>> SHD
   </script>
 </body>
 </html>
