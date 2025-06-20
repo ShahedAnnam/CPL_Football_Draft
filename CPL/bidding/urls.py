@@ -1,5 +1,3 @@
-# bidding/urls.py
-
 from django.urls import path
 from . import views
 
@@ -19,6 +17,7 @@ urlpatterns = [
 
     #path('api/player-bid/<int:player_id>/', views.get_player_bid_data, name='player_bid_data'),
    
+    #path('', views.show_cards, name='show_cards'),  # Default page
     #path('start/', views.start_bidding, name='start-bidding'),
     #path('place/<int:player_id>/', views.place_bid, name='place-bid'),
     #path('results/', views.bidding_results, name='bidding-results'),
