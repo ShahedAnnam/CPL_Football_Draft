@@ -1,142 +1,35 @@
-<!DOCTYPE html>
-<html>
-  <head>
-    <title>Current Player</title>
-  </head>
-  <body>
-    <p><strong>Server Time:</strong> {{ server_time|date:"Y-m-d H:i:s" }}</p>
+{% extends 'cpl/base.html' %}
+{% load static %}
 
-    <!-- Auction Sections -->
-    <div id="not-started-section"></div>
-    <div id="finished-section"></div>
-    <div id="active-section"></div>
+{% block head %}
+    <title>Current Player Auction</title>
 
-    <script>
-      function getCookie(name) {
-        const value = `; ${document.cookie}`;
-        const parts = value.split(`; ${name}=`);
-        if (parts.length === 2)
-          return decodeURIComponent(parts.pop().split(";").shift());
-      }
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Merriweather:wght@400;700&family=Source+Sans+3:wght@400;600;700&display=swap" rel="stylesheet">
 
-      let pausePolling = false;
+    <!-- FontAwesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" integrity="sha512-..." crossorigin="anonymous" referrerpolicy="no-referrer" />
 
-      function placeBid(playerId) {
-        
-        pausePolling = true;
-        console.log("Placing bid for player:", playerId);
-        const button = document.querySelector(`[data-player-id="${playerId}"]`);
-        if (button) button.textContent = "Bidding...";
-        fetch("/authority/increase-duration/5/")
-          .then((res) => res.json())
-          .then((data) => {
-            console.log("Duration increased:", data);
-          })
-          .catch((err) => console.error("Failed to increase duration:", err));
+    <!-- Auction CSS -->
+    <link rel="stylesheet" href="{% static 'bidding/styleCurrentPlayer.css' %}">
+{% endblock %}
 
-        fetch("place-bid/", {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-            "X-CSRFToken": getCookie("csrftoken"),
-          },
-          body: JSON.stringify({ player_id: playerId }),
-        })
-          .then((res) => res.json())
-          .then((data) => {
-            if (!data.success) alert(data.message || "Bid failed");
-          })
-          .catch((error) => {
-            console.error("Error placing bid:", error);
-          })
-          .finally(() => {
-            if (button) button.textContent = "Place bid";
-            setTimeout(() => (pausePolling = false), 1000);
-          });
-      }
+{% block content %}
+<div class="auction-container">
 
-      function attachBidButtonListener() {
-        const btn = document.querySelector(".place-bid-btn");
-        if (btn) {
-          btn.addEventListener("click", () => {
-            const playerId = btn.getAttribute("data-player-id");
-            placeBid(playerId);
-          });
-        }
-      }
+    <div class="server-time">
+        <p><strong><i class="fas fa-clock"></i> Server Time:</strong> <span id="server-time-text">{{ server_time|date:"Y-m-d H:i:s" }}</span></p>
+    </div>
 
-      function updateAuctionInfo() {
-        fetch("auction-status/")
-          .then((res) => res.json())
-          .then((info) => {
-            const serverTime = new Date(info.server_time).toLocaleString();
-            document.querySelector(
-              "p strong"
-            ).nextSibling.textContent = ` ${serverTime}`;
+    <div id="auction-status-sections">
+        <section id="not-started-section" class="auction-section"></section>
+        <section id="finished-section" class="auction-section"></section>
+        <section id="active-section" class="auction-section"></section>
+    </div>
 
-            const notStarted = document.getElementById("not-started-section");
-            const finished = document.getElementById("finished-section");
-            const active = document.getElementById("active-section");
+</div>
+{% endblock %}
 
-            notStarted.innerHTML = "";
-            finished.innerHTML = "";
-            active.innerHTML = "";
-
-            if (info.status === "not_started") {
-              notStarted.innerHTML = `
-                <h2>Auction has not started yet.</h2>
-                <p><strong>Time until start:</strong> ${info.time_until_start} seconds</p>
-              `;
-            } else if (info.status === "finished") {
-              finished.innerHTML = `
-                <h2>Auction is finished.</h2>
-                <p><strong>Time since auction ended:</strong> ${info.time_since_end} seconds ago</p>
-              `;
-            } else if (info.status === "active") {
-              active.innerHTML = `
-                <h2>${info.player.name}</h2>
-                ${
-                  info.player.profile_picture_url
-                    ? `<img src="${info.player.profile_picture_url}" width="150" alt="Profile Picture" />`
-                    : ""
-                }
-                <p><strong>Age:</strong> ${info.player.age}</p>
-                <p><strong>Position:</strong> ${
-                  info.player.playing_position
-                }</p>
-                <p><strong>Batch:</strong> ${info.player.batch}</p>
-                <p><strong>Contact:</strong> ${info.player.contact_number}</p>
-                <p id="assigned-team-${
-                  info.player.id
-                }" class="card-text">Last Bid: ${info.player.assigned_team}</p>
-                <p id="price-${
-                  info.player.id
-                }" class="card-text">Last Bid Price: ${info.player.price}</p>
-                <p><strong>Seconds Remaining for This Player:</strong> ${
-                  info.seconds_remaining
-                }</p>
-                <p><strong>Total Time Left in Auction:</strong> ${
-                  info.total_time_left
-                } seconds</p>
-                ${
-                  "{{ user.is_authenticated }}" === "True" &&
-                  "{{ user.role }}" === "team" &&
-                  info.player.assigned_team !== "{{ request.user }}"
-                    ? `<button class="btn btn-primary place-bid-btn" data-player-id="${info.player.id}">Place bid</button>`
-                    : ""
-                }
-
-              `;
-              attachBidButtonListener();
-            }
-          })
-          .catch((err) => console.error("Polling failed", err));
-      }
-
-      // Poll every 500ms unless paused
-      setInterval(() => {
-        if (!pausePolling) updateAuctionInfo();
-      }, 500);
-    </script>
-  </body>
-</html>
+{% block script %}
+    <script src="{% static 'bidding/currentPlayer.js' %}"></script>
+{% endblock %}
