@@ -3,16 +3,22 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<<<<<<< HEAD
+  <title>Player Bidding</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet" />
+=======
   <title>Live Bidding Cards</title>
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet"/>
   
   <!-- CSRF Token for AJAX -->
   <meta name="csrf-token" content="{{ csrf_token }}">
 
+>>>>>>> SHD
   <style>
     .card-wrapper {
       display: none;
       justify-content: center;
+      flex-wrap: wrap;
     }
     .card-container {
       max-width: 500px;
@@ -38,6 +44,11 @@
   </style>
 </head>
 <body>
+<<<<<<< HEAD
+  <div class="container mt-5">
+    <h1 class="text-center mb-4">PLAYER BIDDING PAGE</h1>
+
+=======
   <h1 class="text-center text-info">
     {% if user.is_authenticated %}
       Your role: {{ user.role }}
@@ -48,10 +59,34 @@
 
   <div class="container mt-5">
     <h1 class="text-center mb-4">Dynamic Player Cards</h1>
+>>>>>>> SHD
     <div id="pre-bid-countdown"></div>
 
     <div id="cards-container" class="card-wrapper">
       {% for player in players %}
+<<<<<<< HEAD
+      <div class="card-container card mb-4" id="card-{{ forloop.counter0 }}" data-player-id="{{ player.id }}">
+        <div class="card-body text-center">
+          <h5 class="card-title">{{ player.name }}</h5>
+          <p class="card-text">Position: {{ player.get_playing_position_display }}</p>
+          <p class="card-text">Age: {{ player.age }}</p>
+          <p class="card-text">Batch: {{ player.batch }}</p>
+          {% if player.profile_picture %}
+            <img src="{{ player.profile_picture.url }}" alt="Profile Picture" class="img-fluid" />
+          {% else %}
+            <p>No profile picture</p>
+          {% endif %}
+          <p class="text-muted">Card time remaining: <span class="timer">20</span> seconds</p>
+          <p class="text-muted">Total time since start: <span class="elapsed">0</span> seconds</p>
+          <p id="assigned-team-{{ player.id }}" class="card-text">Last Bid: {{ player.assigned_team }}</p>
+          <p id="price-{{ player.id }}" class="card-text">Last Bid Price: {{ player.price }}</p>
+
+          {% if user.is_authenticated and user.role == 'team' %}
+          <button class="btn btn-primary" onclick="placeBid({{ player.id }})">Place bid</button>
+          {% endif %}
+        </div>
+      </div>
+=======
         <div class="card-container card mb-4" id="card-{{ forloop.counter }}" data-player-id="{{ player.id }}">
           <div class="card-body text-center">
             <h5 class="card-title">{{ player.name }}</h5>
@@ -72,6 +107,7 @@
             <p class="text-muted">Total time since start: <span class="elapsed">0</span> seconds</p>
           </div>
         </div>
+>>>>>>> SHD
       {% endfor %}
     </div>
 
@@ -80,6 +116,115 @@
     </div>
   </div>
 
+<<<<<<< HEAD
+  <script>
+    const cards = document.querySelectorAll(".card-container");
+    const switchTime = 20;
+    const startTime = new Date("{{ start_time|date:'c' }}").getTime();
+    const countdownDiv = document.getElementById("pre-bid-countdown");
+    const cardsContainer = document.getElementById("cards-container");
+    const serverTimeSpan = document.getElementById("server-time-span");
+
+    let countdownStarted = false;
+
+    function showCard(index) {
+      cards.forEach(card => card.style.display = "none");
+      if (cards[index]) {
+        cards[index].style.display = "block";
+      }
+    }
+
+    function updateCardState(serverTimestamp) {
+      const elapsed = Math.floor((serverTimestamp - startTime) / 1000);
+
+      if (elapsed < 0) {
+        countdownDiv.textContent = `Bidding starts in ${-elapsed} second${-elapsed !== 1 ? "s" : ""}...`;
+        cardsContainer.style.display = "none";
+        return;
+      }
+
+      countdownDiv.style.display = "none";
+      cardsContainer.style.display = "flex";
+
+      const cardIndex = Math.floor(elapsed / switchTime) % cards.length;
+      const countdown = switchTime - (elapsed % switchTime);
+
+      showCard(cardIndex);
+
+      const timerSpan = cards[cardIndex]?.querySelector(".timer");
+      const elapsedSpan = cards[cardIndex]?.querySelector(".elapsed");
+
+      if (timerSpan) timerSpan.textContent = countdown;
+      if (elapsedSpan) elapsedSpan.textContent = elapsed;
+    }
+
+    function syncWithServer() {
+      fetch("server-time/")
+        .then(res => res.json())
+        .then(data => {
+          const serverTimeStr = data.server_time;
+          const serverTime = new Date(serverTimeStr).getTime();
+          serverTimeSpan.textContent = serverTimeStr;
+          updateCardState(serverTime);
+        })
+        .catch(err => console.error("Time sync error:", err));
+    }
+
+    function placeBid(playerId) {
+      fetch("place-bid/", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          "X-CSRFToken": getCookie("csrftoken"),
+        },
+        body: JSON.stringify({ player_id: playerId }),
+      })
+        .then(res => res.json())
+        .then(data => {
+          if (data.success) {
+            const teamEl = document.getElementById(`assigned-team-${playerId}`);
+            const priceEl = document.getElementById(`price-${playerId}`);
+            if (teamEl) teamEl.textContent = `Last Bid: ${data.assigned_team}`;
+            if (priceEl) priceEl.textContent = `Last Bid Price: ${data.price}`;
+          } else {
+            alert(data.message || "Bid failed");
+          }
+        })
+        .catch(error => {
+          console.error("Error placing bid:", error);
+        });
+    }
+
+    function pollCurrentPlayerBid() {
+      const visibleCard = Array.from(cards).find(card => card.style.display !== "none");
+      if (!visibleCard) return;
+
+      const playerId = visibleCard.dataset.playerId;
+
+      fetch(`perform-short/${playerId}/`)
+        .then(res => res.json())
+        .then(data => {
+          const teamEl = document.getElementById(`assigned-team-${playerId}`);
+          const priceEl = document.getElementById(`price-${playerId}`);
+          if (data.assigned_team && teamEl) {
+            teamEl.textContent = `Last Bid: ${data.assigned_team}`;
+          }
+          if (data.price !== undefined && priceEl) {
+            priceEl.textContent = `Last Bid Price: ${data.price}`;
+          }
+        })
+        .catch(err => console.error("Polling error:", err));
+    }
+
+    function getCookie(name) {
+      const value = `; ${document.cookie}`;
+      const parts = value.split(`; ${name}=`);
+      if (parts.length === 2) return decodeURIComponent(parts.pop().split(';').shift());
+    }
+
+    setInterval(syncWithServer, 1000);
+    setInterval(pollCurrentPlayerBid, 500);
+=======
   <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
   <script>
     const cards = document.querySelectorAll('.card-container');
@@ -179,6 +324,7 @@
         alert('Failed to place bid. Please try again.');
       });
     });
+>>>>>>> SHD
   </script>
 </body>
 </html>

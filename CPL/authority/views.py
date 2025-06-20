@@ -14,7 +14,7 @@ def dashboard(request):
 
     if request.method == 'POST':
         for player in players:
-            category = request.POST.get(f'class_{player.id}')
+            category = request.POST.get(f'player_class_{player.id}')
             if category in ['A', 'B', 'C']:
                 player.player_class = category
                 player.save()
