@@ -2,56 +2,41 @@
 {% load static %}
 
 {% block head %}
-  <link rel="stylesheet" href="{% static 'team/styleDashboard.css' %}">
+<link rel="stylesheet" href="{% static 'player/styleDashboard.css' %}">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
 {% endblock %}
 
 {% block content %}
 <div class="dashboard-container">
     <div class="dashboard-card">
-        <h2 class="dashboard-title">Player Dashboard</h2>
-        <p class="dashboard-welcome">Welcome, <strong>{{ user.username }}</strong>!</p>
+        <h2 class="dashboard-title">Welcome, <span>{{ user.username }}</span></h2>
+        <p class="dashboard-subtitle">Manage your player profile and explore other participants.</p>
 
         <div class="dashboard-grid">
 
             <!-- Complete Profile Card -->
-            <div class="dashboard-section border-info text-center">
+            <div class="dashboard-section border-blue">
+                <i class="fas fa-user-edit dashboard-icon"></i>
                 <h5>Complete Your Profile</h5>
-                <p>Add your full details to participate in the bidding process.</p>
-                <a href="{% url 'player:complete_profile' %}" class="btn btn-primary mt-2"
-                   style="padding: 10px 24px; border-radius: 10px; font-weight: 500;">
-                    Complete Profile
-                </a>
+                <p>Fill in your personal and player details to join the draft.</p>
+                <a href="{% url 'player:complete_profile' %}" class="dashboard-btn btn-blue">Complete Profile</a>
             </div>
 
             <!-- All Players Card -->
-            <div class="dashboard-section border-success text-center">
+            <div class="dashboard-section border-green">
+                <i class="fas fa-users dashboard-icon"></i>
                 <h5>See All Players</h5>
-                <p>Explore the list of registered players and their profiles.</p>
-                <a href="{% url 'player:player_list' %}" class="btn btn-success mt-2"
-                   style="padding: 10px 24px; border-radius: 10px; font-weight: 500;">
-                    View Player List
-                </a>
+                <p>Explore the full roster and scout talents.</p>
+                <a href="{% url 'player:player_list' %}" class="dashboard-btn btn-green">View Player List</a>
             </div>
 
             <!-- My Profile Card -->
-            <div class="dashboard-section border-warning text-center">
+            <div class="dashboard-section border-yellow">
+                <i class="fas fa-address-card dashboard-icon"></i>
                 <h5>My Profile</h5>
-                <p>Check your submitted details and update if needed.</p>
-                <a href="{% url 'player:player_profile' player.id %}" class="btn btn-warning mt-2"
-                   style="padding: 10px 24px; border-radius: 10px; font-weight: 500;">
-                    View My Profile
-                </a>
-            </div>
-
-            <!-- Upcoming Features -->
-            <div class="dashboard-section border-secondary">
-                <h5>Upcoming Features</h5>
-                <ul>
-                    <li>✔ View Bidding Details</li>
-                    <li>✔ Edit Personal Info</li>
-                    <li>✔ Notifications</li>
-                    <li>✔ Player Ranking</li>
-                </ul>
+                <p>Review and edit your registered information anytime.</p>
+                <a href="{% url 'player:player_profile' player.id %}" class="dashboard-btn btn-yellow">View My Profile</a>
             </div>
 
         </div>

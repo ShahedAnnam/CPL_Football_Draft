@@ -1,44 +1,99 @@
+body {
+    font-family: 'Inter', sans-serif;
+}
+
 .dashboard-container {
-    padding: 40px;
+    padding: 60px 20px;
+    background: linear-gradient(120deg, #e0f7fa, #ffffff);
+    min-height: 100vh;
 }
 
 .dashboard-card {
-    background-color: #f8f9fa;
-    padding: 30px;
-    border-radius: 16px;
-    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.05);
+    max-width: 1000px;
+    margin: 0 auto;
+    background-color: #ffffff;
+    padding: 40px;
+    border-radius: 20px;
+    box-shadow: 0 12px 30px rgba(0, 0, 0, 0.1);
+    text-align: center;
 }
 
 .dashboard-title {
-    font-size: 32px;
-    font-weight: bold;
-    margin-bottom: 10px;
+    font-size: 36px;
+    font-weight: 700;
+    color: #333;
 }
 
-.dashboard-welcome {
-    font-size: 18px;
+.dashboard-title span {
+    color: #007BFF;
+}
+
+.dashboard-subtitle {
     color: #555;
+    margin-bottom: 40px;
+    font-size: 18px;
 }
 
 .dashboard-grid {
     display: grid;
-    grid-template-columns: 1fr 1fr;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
     gap: 30px;
-    margin-top: 30px;
 }
 
 .dashboard-section {
-    padding: 20px;
-    border: 2px dashed #ccc;
-    border-radius: 12px;
-    background-color: #fff;
+    padding: 30px 20px;
+    border-radius: 16px;
+    background: #fff;
+    transition: all 0.3s ease;
+    position: relative;
+    box-shadow: 0 6px 18px rgba(0, 0, 0, 0.05);
+}
+
+.dashboard-section:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 10px 24px rgba(0, 0, 0, 0.1);
 }
 
 .dashboard-section h5 {
+    font-size: 20px;
     font-weight: 600;
+    margin: 15px 0 10px;
+    color: #333;
 }
 
-.dashboard-section ul {
-    padding-left: 20px;
+.dashboard-section p {
+    font-size: 15px;
+    color: #666;
+    margin-bottom: 20px;
 }
 
+.dashboard-btn {
+    display: inline-block;
+    padding: 10px 24px;
+    border-radius: 10px;
+    font-weight: 600;
+    color: white;
+    text-decoration: none;
+    transition: background-color 0.3s ease;
+}
+
+.dashboard-icon {
+    font-size: 36px;
+    color: #007BFF;
+    margin-bottom: 10px;
+}
+
+/* Border Color Themes */
+.border-blue { border-top: 5px solid #007BFF; }
+.border-green { border-top: 5px solid #28a745; }
+.border-yellow { border-top: 5px solid #ffc107; }
+
+/* Button Themes */
+.btn-blue { background-color: #007BFF; }
+.btn-blue:hover { background-color: #0056b3; }
+
+.btn-green { background-color: #28a745; }
+.btn-green:hover { background-color: #1e7e34; }
+
+.btn-yellow { background-color: #ffc107; color: #333; }
+.btn-yellow:hover { background-color: #e0a800; color: white; }
