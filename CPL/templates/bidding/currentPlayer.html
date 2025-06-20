@@ -6,57 +6,10 @@
   <body>
     <p><strong>Server Time:</strong> {{ server_time|date:"Y-m-d H:i:s" }}</p>
 
-    {% if info.status == 'not_started' %}
-    <h2>Auction has not started yet.</h2>
-    <p>
-      <strong>Time until start:</strong> {{ info.time_until_start }} seconds
-    </p>
-
-    {% elif info.status == 'finished' %}
-    <h2>Auction is finished.</h2>
-    <p>
-      <strong>Time since auction ended:</strong> {{ info.time_since_end }}
-      seconds ago
-    </p>
-
-    {% elif info.status == 'active' %}
-    <div>
-      <h2>{{ info.player.name }}</h2>
-
-      {% if info.player.profile_picture_url %}
-      <img
-        src="{{ info.player.profile_picture_url }}"
-        width="150"
-        alt="Profile Picture"
-      />
-      {% endif %}
-
-      <p><strong>Age:</strong> {{ info.player.age }}</p>
-      <p><strong>Position:</strong> {{ info.player.playing_position }}</p>
-      <p><strong>Batch:</strong> {{ info.player.batch }}</p>
-      <p><strong>Contact:</strong> {{ info.player.contact_number }}</p>
-      <p id="assigned-team-{{ info.player.id }}" class="card-text">
-        Last Bid: {{ info.player.assigned_team }}
-      </p>
-      <p id="price-{{ info.player.id }}" class="card-text">
-        Last Bid Price: {{ info.player.price }}
-      </p>
-      
-      <p>
-        <strong>Seconds Remaining for This Player:</strong> 
-        {{info.seconds_remaining}}
-      </p>
-      <p>
-        <strong>Total Time Left in Auction:</strong> {{ info.total_time_left }}
-        seconds
-      </p>
-      {% if user.is_authenticated and user.role == 'team' %}
-      <button class="btn btn-primary" onclick="placeBid({{ info.player.id }})">
-        Place bid
-      </button>
-      {% endif %}
-    </div>
-    {% endif %}
+    <!-- Auction Sections -->
+    <div id="not-started-section"></div>
+    <div id="finished-section"></div>
+    <div id="active-section"></div>
 
     <script>
       function getCookie(name) {
@@ -65,7 +18,22 @@
         if (parts.length === 2)
           return decodeURIComponent(parts.pop().split(";").shift());
       }
+
+      let pausePolling = false;
+
       function placeBid(playerId) {
+        
+        pausePolling = true;
+        console.log("Placing bid for player:", playerId);
+        const button = document.querySelector(`[data-player-id="${playerId}"]`);
+        if (button) button.textContent = "Bidding...";
+        fetch("/authority/increase-duration/5/")
+          .then((res) => res.json())
+          .then((data) => {
+            console.log("Duration increased:", data);
+          })
+          .catch((err) => console.error("Failed to increase duration:", err));
+
         fetch("place-bid/", {
           method: "POST",
           headers: {
@@ -76,23 +44,99 @@
         })
           .then((res) => res.json())
           .then((data) => {
-            if (data.success) {
-              const teamEl = document.getElementById(
-                `assigned-team-${playerId}`
-              );
-              const priceEl = document.getElementById(`price-${playerId}`);
-              if (teamEl)
-                teamEl.textContent = `Last Bid: ${data.assigned_team}`;
-              if (priceEl)
-                priceEl.textContent = `Last Bid Price: ${data.price}`;
-            } else {
-              alert(data.message || "Bid failed");
-            }
+            if (!data.success) alert(data.message || "Bid failed");
           })
           .catch((error) => {
             console.error("Error placing bid:", error);
+          })
+          .finally(() => {
+            if (button) button.textContent = "Place bid";
+            setTimeout(() => (pausePolling = false), 1000);
           });
       }
+
+      function attachBidButtonListener() {
+        const btn = document.querySelector(".place-bid-btn");
+        if (btn) {
+          btn.addEventListener("click", () => {
+            const playerId = btn.getAttribute("data-player-id");
+            placeBid(playerId);
+          });
+        }
+      }
+
+      function updateAuctionInfo() {
+        fetch("auction-status/")
+          .then((res) => res.json())
+          .then((info) => {
+            const serverTime = new Date(info.server_time).toLocaleString();
+            document.querySelector(
+              "p strong"
+            ).nextSibling.textContent = ` ${serverTime}`;
+
+            const notStarted = document.getElementById("not-started-section");
+            const finished = document.getElementById("finished-section");
+            const active = document.getElementById("active-section");
+
+            notStarted.innerHTML = "";
+            finished.innerHTML = "";
+            active.innerHTML = "";
+
+            if (info.status === "not_started") {
+              notStarted.innerHTML = `
+                <h2>Auction has not started yet.</h2>
+                <p><strong>Time until start:</strong> ${info.time_until_start} seconds</p>
+              `;
+            } else if (info.status === "finished") {
+              finished.innerHTML = `
+                <h2>Auction is finished.</h2>
+                <p><strong>Time since auction ended:</strong> ${info.time_since_end} seconds ago</p>
+              `;
+            } else if (info.status === "active") {
+              active.innerHTML = `
+                <h2>${info.player.name}</h2>
+                ${
+                  info.player.profile_picture_url
+                    ? `<img src="${info.player.profile_picture_url}" width="150" alt="Profile Picture" />`
+                    : ""
+                }
+                <p><strong>Age:</strong> ${info.player.age}</p>
+                <p><strong>Position:</strong> ${
+                  info.player.playing_position
+                }</p>
+                <p><strong>Batch:</strong> ${info.player.batch}</p>
+                <p><strong>Contact:</strong> ${info.player.contact_number}</p>
+                <p id="assigned-team-${
+                  info.player.id
+                }" class="card-text">Last Bid: ${info.player.assigned_team}</p>
+                <p id="price-${
+                  info.player.id
+                }" class="card-text">Last Bid Price: ${info.player.price}</p>
+                <p><strong>Seconds Remaining for This Player:</strong> ${
+                  info.seconds_remaining
+                }</p>
+                <p><strong>Total Time Left in Auction:</strong> ${
+                  info.total_time_left
+                } seconds</p>
+                ${
+                  "{{ user.is_authenticated }}" === "True" &&
+                  "{{ user.role }}" === "team" &&
+                  info.player.assigned_team !== "{{ request.user }}"
+                    ? `<button class="btn btn-primary place-bid-btn" data-player-id="${info.player.id}">Place bid</button>`
+                    : ""
+                }
+
+              `;
+              attachBidButtonListener();
+            }
+          })
+          .catch((err) => console.error("Polling failed", err));
+      }
+
+      // Poll every 500ms unless paused
+      setInterval(() => {
+        if (!pausePolling) updateAuctionInfo();
+      }, 500);
     </script>
   </body>
 </html>
