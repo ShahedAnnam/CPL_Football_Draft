@@ -1,0 +1,16 @@
+<h2>Set Auction Settings</h2>
+
+{% if error %}
+    <p style="color: red">{{ error }}</p>
+{% endif %}
+
+<form method="post">
+    {% csrf_token %}
+    <label for="start_time">Auction Start Time (Y-m-d H:M:S):</label><br>
+    <input type="text" name="start_time" value="{{ current_start|date:'Y-m-d H:i:s' }}"><br><br>
+
+    <label for="duration">Player Duration (in seconds):</label><br>
+    <input type="number" name="duration" value="{{ current_duration }}"><br><br>
+
+    <button type="submit">Save</button>
+</form>
