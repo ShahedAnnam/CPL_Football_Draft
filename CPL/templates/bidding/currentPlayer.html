@@ -1,0 +1,35 @@
+{% extends 'cpl/base.html' %}
+{% load static %}
+
+{% block head %}
+    <title>Current Player Auction</title>
+
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Merriweather:wght@400;700&family=Source+Sans+3:wght@400;600;700&display=swap" rel="stylesheet">
+
+    <!-- FontAwesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" integrity="sha512-..." crossorigin="anonymous" referrerpolicy="no-referrer" />
+
+    <!-- Auction CSS -->
+    <link rel="stylesheet" href="{% static 'bidding/styleCurrentPlayer.css' %}">
+{% endblock %}
+
+{% block content %}
+<div class="auction-container">
+
+    <div class="server-time">
+        <p><strong><i class="fas fa-clock"></i> Server Time:</strong> <span id="server-time-text">{{ server_time|date:"Y-m-d H:i:s" }}</span></p>
+    </div>
+
+    <div id="auction-status-sections">
+        <section id="not-started-section" class="auction-section"></section>
+        <section id="finished-section" class="auction-section"></section>
+        <section id="active-section" class="auction-section"></section>
+    </div>
+
+</div>
+{% endblock %}
+
+{% block script %}
+    <script src="{% static 'bidding/currentPlayer.js' %}"></script>
+{% endblock %}
