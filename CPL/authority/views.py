@@ -73,3 +73,38 @@ def set_auction_settings(request):
         'current_start': settings.auction_start_time,
         'current_duration': settings.player_duration.total_seconds(),
     })
+
+
+from django.http import JsonResponse
+from django.contrib.auth.decorators import login_required
+from bidding.models import AuctionSettings
+from datetime import timedelta
+
+@login_required
+def initialize_player_duration_view(request, seconds):
+    # if request.user.role != 'authority':
+    #     return JsonResponse({'error': 'Unauthorized'}, status=403)
+
+    try:
+        settings, _ = AuctionSettings.objects.get_or_create(id=1)
+        settings.player_duration = timedelta(seconds=seconds)
+        settings.save()
+        return JsonResponse({'message': f'Initialized to {seconds} seconds.'})
+    except Exception as e:
+        return JsonResponse({'error': str(e)}, status=400)
+
+
+@login_required
+def increase_player_duration_view(request, seconds):
+    # if request.user.role != 'authority':
+    #     return JsonResponse({'error': 'Unauthorized'}, status=403)
+
+    try:
+        settings, _ = AuctionSettings.objects.get_or_create(id=1)
+        current = settings.player_duration or timedelta(seconds=0)
+        settings.player_duration = current + timedelta(seconds=seconds)
+        settings.save()
+        return JsonResponse({'message': f'Increased by {seconds} seconds.'})
+    except Exception as e:
+        return JsonResponse({'error': str(e)}, status=400)
+

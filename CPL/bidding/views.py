@@ -13,6 +13,9 @@ from django.http import JsonResponse, HttpResponseBadRequest
 from django.views.decorators.csrf import csrf_exempt
 from django.utils.timezone import now
 from bidding.models import AuctionSettings
+from authority.views import increase_player_duration_view
+
+
 
 # Hardcoded or configurable START TIME
 from django.utils.timezone import datetime, timedelta
@@ -33,6 +36,7 @@ def server_time(request):
 
 @csrf_exempt
 def place_bid(request):
+    print("ENCOUNTEERED")
     if request.method != "POST":
         return HttpResponseBadRequest("Invalid method")
 
@@ -42,8 +46,10 @@ def place_bid(request):
     player = get_object_or_404(Player, id=player_id)
     
     # Mock logic (replace with real bidding logic and user/team tracking)
+    
     player.price += 100  # example: increment price
     player.assigned_team = request.user.username if request.user.is_authenticated else "Anonymous"
+    #increase_player_duration_view(5)
     player.save()
 
     return JsonResponse({
@@ -105,7 +111,7 @@ def get_current_player_info():
     seconds_remaining = int((round_end - now).total_seconds())
 
     player = players[round_index]
-
+    
     return {
         "status": "active",
         "player": {
@@ -129,3 +135,9 @@ def get_current_player_info():
 def current_player_view(request):
     player_info = get_current_player_info()
     return render(request, 'bidding/currentPlayer.html', {'info': player_info})
+
+from django.views.decorators.cache import never_cache
+@never_cache
+def auction_status(request):
+    info = get_current_player_info() # returns dict with player, status, etc.
+    return JsonResponse(info)
