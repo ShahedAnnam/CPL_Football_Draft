@@ -3,6 +3,9 @@ from . import views
 
 
 print("DEBUG")
+
+app_name = 'bidding'
+
 urlpatterns = [
     #path('', views.show_cards, name='show_cards'),  # Default page
     #path("place-bid/", views.place_bid, name="place_bid"),
