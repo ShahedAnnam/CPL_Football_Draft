@@ -53,61 +53,6 @@ function attachBidButtonListener() {
   }
 }
 
-function updateAuctionInfo() {
-  fetch('auction-status/')
-    .then(res => res.json())
-    .then(info => {
-      const serverTime = new Date(info.server_time).toLocaleString();
-      document.getElementById('server-time-text').textContent = serverTime;
-
-      const notStarted = document.getElementById('not-started-section');
-      const finished = document.getElementById('finished-section');
-      const active = document.getElementById('active-section');
-
-      notStarted.innerHTML = '';
-      finished.innerHTML = '';
-      active.innerHTML = '';
-
-      if (info.status === 'not_started') {
-        notStarted.innerHTML = `
-          <h2>Auction has not started yet.</h2>
-          <p><strong>Time until start:</strong> ${info.time_until_start} seconds</p>
-        `;
-      } else if (info.status === 'finished') {
-        finished.innerHTML = `
-          <h2>Auction is finished.</h2>
-          <p><strong>Time since auction ended:</strong> ${info.time_since_end} seconds ago</p>
-        `;
-      } else if (info.status === 'active') {
-        active.innerHTML = `
-          <h2>${info.player.name}</h2>
-          ${
-            info.player.profile_picture_url
-              ? `<img src="${info.player.profile_picture_url}" alt="Profile Picture" />`
-              : ''
-          }
-          <p><strong>Age:</strong> ${info.player.age}</p>
-          <p><strong>Position:</strong> ${info.player.playing_position}</p>
-          <p><strong>Batch:</strong> ${info.player.batch}</p>
-          <p><strong>Contact:</strong> ${info.player.contact_number}</p>
-          <p id="assigned-team-${info.player.id}">Last Bid: ${info.player.assigned_team}</p>
-          <p id="price-${info.player.id}">Last Bid Price: ${info.player.price}</p>
-          <p><strong>Seconds Remaining for This Player:</strong> ${info.seconds_remaining}</p>
-          <p><strong>Total Time Left in Auction:</strong> ${info.total_time_left} seconds</p>
-          ${
-            "{{ user.is_authenticated }}" === "True" &&
-            "{{ user.role }}" === "team" &&
-            info.player.assigned_team !== "{{ request.user }}"
-              ? `<button class="place-bid-btn" data-player-id="${info.player.id}">Place bid</button>`
-              : ''
-          }
-        `;
-        attachBidButtonListener();
-      }
-    })
-    .catch(err => console.error('Polling failed', err));
-}
-
 // Poll every 500ms unless paused
 setInterval(() => {
   if (!pausePolling) updateAuctionInfo();
