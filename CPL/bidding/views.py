@@ -2,12 +2,12 @@ from django.shortcuts import render
 from datetime import datetime, timezone as dt_timezone
 from django.utils import timezone
 from player.models import Player
+from team.models import Team
 from django.http import JsonResponse
 from django.views.decorators.csrf import csrf_exempt
 from django.contrib.auth.decorators import login_required
 from django.utils.decorators import method_decorator
 import json
-
 from django.shortcuts import render, get_object_or_404
 from django.http import JsonResponse, HttpResponseBadRequest
 from django.views.decorators.csrf import csrf_exempt
@@ -21,6 +21,34 @@ from authority.views import increase_player_duration_view
 from django.utils.timezone import datetime, timedelta
 import pytz
 START_TIME = datetime(2025, 6, 1, 18, 0, 0, tzinfo=pytz.UTC)  # example
+
+
+def start_auction(request):
+    if request.method == 'GET':
+        setting = AuctionSettings.objects.first()
+        if not setting:
+            return JsonResponse({'error': 'No AuctionSettings found'}, status=500)
+        setting.start_time = timezone.now()
+        setting.save()
+        return JsonResponse({'success': True})
+    return JsonResponse({'error': 'Invalid request'}, status=400)
+
+def pause_auction(request):
+    if request.method == 'GET':
+        # For now, just return success, implement real pause logic later
+        return JsonResponse({'success': True})
+    return JsonResponse({'error': 'Invalid request'}, status=400)
+
+def end_auction(request):
+    if request.method == 'GET':
+        setting = AuctionSettings.objects.first()
+        if not setting:
+            return JsonResponse({'error': 'No AuctionSettings found'}, status=500)
+        setting.end_time = timezone.now()
+        setting.save()
+        return JsonResponse({'success': True})
+    return JsonResponse({'error': 'Invalid request'}, status=400)
+
 
 def bidding_page(request):
     players = Player.objects.all().order_by('id')  # or any specific order
@@ -36,27 +64,34 @@ def server_time(request):
 
 @csrf_exempt
 def place_bid(request):
-    print("ENCOUNTEERED")
     if request.method != "POST":
         return HttpResponseBadRequest("Invalid method")
 
-    data = json.loads(request.body)
-    player_id = data.get("player_id")
+    if not request.user.is_authenticated:
+        return JsonResponse({"success": False, "message": "You must be logged in to bid."})
 
-    player = get_object_or_404(Player, id=player_id)
-    
-    # Mock logic (replace with real bidding logic and user/team tracking)
-    
-    player.price += 100  # example: increment price
-    player.assigned_team = request.user.username if request.user.is_authenticated else "Anonymous"
-    #increase_player_duration_view(5)
+    # load the Team that belongs to the logged-in user
+    try:
+        bidder_team = Team.objects.get(user=request.user)
+    except Team.DoesNotExist:
+        return JsonResponse({"success": False, "message": "Your user is not linked to any team."})
+
+    data = json.loads(request.body)
+    player = get_object_or_404(Player, id=data.get("player_id"))
+
+    # increment price & assign FK
+    player.price += 100
+    player.assigned_team = bidder_team
     player.save()
 
     return JsonResponse({
         "success": True,
         "price": player.price,
-        "assigned_team": player.assigned_team,
+        "assigned_team": bidder_team.user.username,
+        "assigned_team_id": bidder_team.id,
     })
+
+
 
 def perform_short(request, player_id):
     player = get_object_or_404(Player, id=player_id)
@@ -122,7 +157,8 @@ def get_current_player_info():
             "batch": player.batch,
             "contact_number": player.contact_number,
             "profile_picture_url": player.profile_picture.url if player.profile_picture else None,
-            "assigned_team": player.assigned_team,
+            "assigned_team": player.assigned_team.user.username if player.assigned_team else "Not bought yet",
+            "assigned_team_id": player.assigned_team.id if player.assigned_team else None,
             "price": player.price,
         },
         "seconds_remaining": seconds_remaining,
@@ -133,8 +169,22 @@ def get_current_player_info():
 
 
 def current_player_view(request):
-    player_info = get_current_player_info()
-    return render(request, 'bidding/currentPlayer.html', {'info': player_info})
+    # ... your existing code ...
+    logged_in_team_id = None
+    if request.user.is_authenticated:
+        try:
+            logged_in_team_id = request.user.team.id
+        except AttributeError:
+            logged_in_team_id = None
+
+    context = {
+        'logged_in_team_id': logged_in_team_id,
+        'user_role': getattr(request.user, 'role', '') if request.user.is_authenticated else '',
+        'user_is_authenticated': request.user.is_authenticated,
+        # other context variables...
+    }
+    return render(request, 'bidding/currentPlayer.html', context)
+
 
 from django.views.decorators.cache import never_cache
 @never_cache

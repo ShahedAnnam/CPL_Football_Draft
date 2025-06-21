@@ -1,21 +1,19 @@
 from django.shortcuts import render, redirect
-from .forms import PlayerCategoryForm
-
-from bidding.models import AuctionSettings
-from django import forms
-
-
-
+from django.utils.timezone import make_aware, now
+from datetime import datetime, timedelta
 from django.contrib.auth.decorators import login_required
 from django.core.exceptions import PermissionDenied
-from django.shortcuts import render, redirect
+from django.http import JsonResponse
+from django.utils import timezone
 from player.models import Player
 from team.models import Team
+from bidding.models import AuctionSettings
+
 
 @login_required
 def dashboard(request):
     if not hasattr(request.user, 'role') or request.user.role != 'authority':
-        raise PermissionDenied  # or redirect somewhere else if you want
+        raise PermissionDenied
 
     players = Player.objects.all()
     teams = Team.objects.all()
@@ -34,21 +32,8 @@ def dashboard(request):
     })
 
 
-
-class AuctionSettingsForm(forms.ModelForm):
-    class Meta:
-        model = AuctionSettings
-        fields = ['auction_start_time', 'player_duration']
-
-# authority/views.py
-from django.shortcuts import render, redirect
-from django.utils.timezone import make_aware
-from datetime import datetime, timedelta
-from bidding.models import AuctionSettings
-from django.utils.timezone import now
-
+@login_required
 def set_auction_settings(request):
-    # Fetch the single instance or create it
     settings, created = AuctionSettings.objects.get_or_create(id=1)
 
     if request.method == 'POST':
@@ -56,7 +41,14 @@ def set_auction_settings(request):
         duration_seconds = request.POST.get('duration')
 
         try:
-            dt = datetime.strptime(start_time_str, "%Y-%m-%d %H:%M:%S")
+            # Try parsing datetime in multiple formats:
+            try:
+                # Format from datetime-local input: "2025-06-21T20:05"
+                dt = datetime.strptime(start_time_str, "%Y-%m-%dT%H:%M")
+            except ValueError:
+                # Fallback: "2025-06-21 20:05:00"
+                dt = datetime.strptime(start_time_str, "%Y-%m-%d %H:%M:%S")
+
             settings.auction_start_time = make_aware(dt)
             settings.player_duration = timedelta(seconds=int(float(duration_seconds)))
             settings.save()
@@ -75,16 +67,8 @@ def set_auction_settings(request):
     })
 
 
-from django.http import JsonResponse
-from django.contrib.auth.decorators import login_required
-from bidding.models import AuctionSettings
-from datetime import timedelta
-
 @login_required
 def initialize_player_duration_view(request, seconds):
-    # if request.user.role != 'authority':
-    #     return JsonResponse({'error': 'Unauthorized'}, status=403)
-
     try:
         settings, _ = AuctionSettings.objects.get_or_create(id=1)
         settings.player_duration = timedelta(seconds=seconds)
@@ -96,9 +80,6 @@ def initialize_player_duration_view(request, seconds):
 
 @login_required
 def increase_player_duration_view(request, seconds):
-    # if request.user.role != 'authority':
-    #     return JsonResponse({'error': 'Unauthorized'}, status=403)
-
     try:
         settings, _ = AuctionSettings.objects.get_or_create(id=1)
         current = settings.player_duration or timedelta(seconds=0)
@@ -107,4 +88,6 @@ def increase_player_duration_view(request, seconds):
         return JsonResponse({'message': f'Increased by {seconds} seconds.'})
     except Exception as e:
         return JsonResponse({'error': str(e)}, status=400)
+
+
 

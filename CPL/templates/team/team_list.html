@@ -9,141 +9,171 @@
 
 {% block content %}
 <div class="elite-container">
-    <div class="elite-header">
-        <h1 class="elite-title">Football <span>Squads</span></h1>
-    </div>
+  <div class="elite-header">
+    <h1 class="elite-title">Football <span>Squads</span></h1>
+  </div>
 
-    <div class="team-grid">
-        {% for team in teams %}
-        <div class="team-card">
-            <!-- First Row: Logo, Name, Slogan -->
-            <div class="team-top-row">
-                <img src="{{ team.logo.url }}" class="team-logo" alt="{{ team.user.username }}">
-                <div class="team-info">
-                    <h2 class="team-name">{{ team.user.username }}</h2>
-                    <p class="team-slogan">"{{ team.slogan }}"</p>
-                </div>
-            </div>
-            
-            <!-- Second Row: Profile Pic and Squad -->
-            <div class="team-bottom-row">
-                <div class="team-profile">
-                    <img src="{{ team.profile_pic.url }}" class="profile-image" alt="{{ team.user.username }}">
-                </div>
-                
-                <div class="team-squad">
-                    <div class="squad-grid">
-                        {% for i in "123456789101112" %}
-                        <div class="player-avatar">
-                            <i class="fas fa-user"></i>
-                        </div>
-                        {% endfor %}
-                    </div>
-                    
-                    <button class="view-squad-btn" onclick="openModal('{{ team.user.username }}', '{{ team.logo.url }}')">
-                        <i class="fas fa-users"></i>
-                        <span>View Full Squad</span>
-                    </button>
-                </div>
-            </div>
+  <div class="team-grid">
+    {% for team in teams %}
+    <div class="team-card">
+      <!-- Top row: logo, name, slogan -->
+      <div class="team-top-row">
+        <img src="{{ team.logo.url }}" class="team-logo" alt="{{ team.user.username }}">
+        <div class="team-info">
+          <h2 class="team-name">{{ team.user.username }}</h2>
+          <p class="team-slogan">"{{ team.slogan }}"</p>
         </div>
-        {% empty %}
-        <div class="empty-state">
-            <i class="fas fa-trophy"></i>
-            <h3>No Teams Registered</h3>
+      </div>
+
+      <!-- Bottom row: profile + avatars -->
+      <div class="team-bottom-row">
+        <div class="team-profile">
+          <img src="{{ team.profile_pic.url }}" class="profile-image" alt="{{ team.user.username }}">
+        </div>
+        <div class="team-squad">
+          <div class="squad-grid">
+            {% for player in team.players.all %}
+            <div class="player-avatar" title="{{ player.name }}">
+              {% if player.profile_picture %}
+              <img src="{{ player.profile_picture.url }}" alt="{{ player.name }}">
+              {% else %}
+              <i class="fas fa-user"></i>
+              {% endif %}
+            </div>
+            {% empty %}
+            <div class="empty-position">
+              <i class="fas fa-user-slash"></i>
+              <p>No players signed yet</p>
+            </div>
+            {% endfor %}
+          </div>
+          <button class="view-squad-btn"
+                  onclick="openModal({{ team.id }}, '{{ team.user.username|escapejs }}', '{{ team.logo.url }}')">
+            <i class="fas fa-users"></i> View Full Squad
+          </button>
+        </div>
+      </div>
+
+      <!-- Hidden data for modal rendering -->
+      <div id="players-data-{{ team.id }}" style="display:none;">
+        {% regroup team.players.all by playing_position as grouped_players %}
+        {% for group in grouped_players %}
+        <div data-position="{{ group.grouper }}">
+          {% for p in group.list %}
+          <div class="modal-player">
+            {% if p.profile_picture %}
+            <img src="{{ p.profile_picture.url }}" class="modal-player-img" alt="{{ p.name }}">
+            {% else %}
+            <i class="fas fa-user modal-player-icon"></i>
+            {% endif %}
+            <span>{{ p.name }}</span>
+          </div>
+          {% endfor %}
         </div>
         {% endfor %}
+      </div>
     </div>
+    {% empty %}
+    <div class="empty-state">
+      <i class="fas fa-trophy"></i>
+      <h3>No Teams Registered</h3>
+    </div>
+    {% endfor %}
+  </div>
 </div>
 
 <!-- Modal -->
-<div class="elite-modal" id="squadModal">
-    <div class="modal-container">
-        <div class="modal-header">
-            <button class="modal-close" onclick="closeModal()">&times;</button>
-            <div class="modal-team">
-                <img src="" alt="Team Logo" class="modal-logo" id="modalTeamLogo">
-                <h2 class="modal-team-name" id="modalTeamName"></h2>
-            </div>
-        </div>
-
-        <div class="modal-body">
-            <div class="position-section">
-                <h3 class="section-title">
-                    <i class="fas fa-tshirt"></i>
-                    Goalkeepers
-                </h3>
-                <div class="player-list">
-                    <div class="empty-position">
-                        <i class="fas fa-user-slash"></i>
-                        <p>No goalkeepers signed yet</p>
-                    </div>
-                </div>
-            </div>
-
-            <div class="position-section">
-                <h3 class="section-title">
-                    <i class="fas fa-shield-alt"></i>
-                    Defenders
-                </h3>
-                <div class="player-list">
-                    <div class="empty-position">
-                        <i class="fas fa-user-slash"></i>
-                        <p>No defenders signed yet</p>
-                    </div>
-                </div>
-            </div>
-
-            <div class="position-section">
-                <h3 class="section-title">
-                    <i class="fas fa-compress-arrows-alt"></i>
-                    Midfielders
-                </h3>
-                <div class="player-list">
-                    <div class="empty-position">
-                        <i class="fas fa-user-slash"></i>
-                        <p>No midfielders signed yet</p>
-                    </div>
-                </div>
-            </div>
-
-            <div class="position-section">
-                <h3 class="section-title">
-                    <i class="fas fa-futbol"></i>
-                    Forwards
-                </h3>
-                <div class="player-list">
-                    <div class="empty-position">
-                        <i class="fas fa-user-slash"></i>
-                        <p>No forwards signed yet</p>
-                    </div>
-                </div>
-            </div>
-        </div>
+<div class="elite-modal" id="squadModal" style="display:none;">
+  <div class="modal-container">
+    <div class="modal-header">
+      <button class="modal-close">&times;</button>
+      <div class="modal-team">
+        <img id="modalTeamLogo" class="modal-logo" src="" alt="">
+        <h2 id="modalTeamName" class="modal-team-name"></h2>
+      </div>
     </div>
+    <div class="modal-body">
+      <div class="position-section">
+        <h3 class="section-title"><i class="fas fa-tshirt"></i> Goalkeepers</h3>
+        <div class="player-list" id="goalkeepers-list"></div>
+      </div>
+      <div class="position-section">
+        <h3 class="section-title"><i class="fas fa-shield-alt"></i> Defenders</h3>
+        <div class="player-list" id="defenders-list"></div>
+      </div>
+      <div class="position-section">
+        <h3 class="section-title"><i class="fas fa-compress-arrows-alt"></i> Midfielders</h3>
+        <div class="player-list" id="midfielders-list"></div>
+      </div>
+      <div class="position-section">
+        <h3 class="section-title"><i class="fas fa-futbol"></i> Forwards</h3>
+        <div class="player-list" id="forwards-list"></div>
+      </div>
+    </div>
+  </div>
 </div>
+{% endblock %}
 
+{% block script %}
 <script>
-    // Modal functions
-    function openModal(teamName, teamLogo) {
-        const modal = document.getElementById('squadModal');
-        document.getElementById('modalTeamName').textContent = teamName;
-        document.getElementById('modalTeamLogo').src = teamLogo;
-        modal.style.display = 'block';
-        document.body.style.overflow = 'hidden';
-    }
-    
-    function closeModal() {
-        document.getElementById('squadModal').style.display = 'none';
-        document.body.style.overflow = 'auto';
-    }
-    
-    // Close modal when clicking outside
-    window.addEventListener('click', function(event) {
-        const modal = document.getElementById('squadModal');
-        if (event.target === modal) {
-            closeModal();
+  document.addEventListener('DOMContentLoaded', () => {
+    const modal = document.getElementById('squadModal');
+    const closeBtn = modal.querySelector('.modal-close');
+
+    function openModal(teamId, teamName, logoUrl) {
+      document.getElementById('modalTeamName').textContent = teamName;
+      document.getElementById('modalTeamLogo').src = logoUrl;
+
+      // Clear all
+      ['goalkeepers-list', 'defenders-list', 'midfielders-list', 'forwards-list'].forEach(id => {
+        document.getElementById(id).innerHTML = '';
+      });
+
+      const hidden = document.getElementById(`players-data-${teamId}`);
+      if (hidden) {
+        hidden.querySelectorAll('[data-position]').forEach(section => {
+          const pos = section.getAttribute('data-position');
+          const listId = {
+            'Goalkeeper': 'goalkeepers-list',
+            'Defender': 'defenders-list',
+            'Midfielder': 'midfielders-list',
+            'Forward': 'forwards-list'
+          }[pos];
+
+          const listEl = document.getElementById(listId);
+          section.querySelectorAll('.modal-player').forEach(player => {
+            listEl.appendChild(player.cloneNode(true));
+          });
+        });
+      }
+
+      // If any section is still empty
+      ['goalkeepers-list', 'defenders-list', 'midfielders-list', 'forwards-list'].forEach(id => {
+        const list = document.getElementById(id);
+        if (!list.hasChildNodes()) {
+          list.innerHTML = `
+            <div class="empty-position">
+              <i class="fas fa-user-slash"></i>
+              <p>No players signed yet</p>
+            </div>`;
         }
+      });
+
+      modal.style.display = 'block';
+      document.body.style.overflow = 'hidden';
+    }
+
+    window.openModal = openModal;
+
+    function closeModal() {
+      modal.style.display = 'none';
+      document.body.style.overflow = '';
+    }
+
+    closeBtn.addEventListener('click', closeModal);
+    modal.addEventListener('click', e => {
+      if (e.target === modal) closeModal();
     });
+  });
 </script>
 {% endblock %}

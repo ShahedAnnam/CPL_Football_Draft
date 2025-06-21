@@ -2,93 +2,120 @@
 {% load static %}
 
 {% block head %}
-    <title>Current Player Auction</title>
-
-    <!-- Google Fonts -->
-    <link href="https://fonts.googleapis.com/css2?family=Merriweather:wght@400;700&family=Source+Sans+3:wght@400;600;700&display=swap" rel="stylesheet">
-
-    <!-- FontAwesome -->
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" integrity="sha512-..." crossorigin="anonymous" referrerpolicy="no-referrer" />
-
-    <!-- Auction CSS -->
-    <link rel="stylesheet" href="{% static 'bidding/styleCurrentPlayer.css' %}">
+  <title>Current Player Auction</title>
+  <link href="https://fonts.googleapis.com/css2?family=Merriweather:wght@400;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" />
+  <link rel="stylesheet" href="{% static 'bidding/styleCurrentPlayer.css' %}">
 {% endblock %}
 
 {% block content %}
 <div class="auction-container">
-
-    <div class="server-time">
-        <p><strong><i class="fas fa-clock"></i> Server Time:</strong> <span id="server-time-text">{{ server_time|date:"Y-m-d H:i:s" }}</span></p>
-    </div>
-
-    <div id="auction-status-sections">
-        <section id="not-started-section" class="auction-section"></section>
-        <section id="finished-section" class="auction-section"></section>
-        <section id="active-section" class="auction-section"></section>
-    </div>
-
+  <div class="server-time">
+    <p><i class="fas fa-clock"></i> Server Time: <span id="server-time-text">{{ server_time|date:"Y-m-d H:i:s" }}</span></p>
+  </div>
+  <div id="auction-status-sections">
+    <section id="not-started-section" class="auction-section"></section>
+    <section id="finished-section" class="auction-section"></section>
+    <section id="active-section" class="auction-section"></section>
+  </div>
 </div>
 {% endblock %}
 
+
 {% block script %}
-    <script src="{% static 'bidding/currentPlayer.js' %}"></script>
+<script>
+  const loggedInTeamId = Number({{ logged_in_team_id|default:'null' }});
+  const userRole        = "{{ user_role }}";
+  const userIsAuthenticated = "{{ user_is_authenticated }}";
 
-    <script>
   function updateAuctionInfo() {
-  fetch('auction-status/')
-    .then(res => res.json())
-    .then(info => {
-      const serverTime = new Date(info.server_time).toLocaleString();
-      document.getElementById('server-time-text').textContent = serverTime;
+    fetch("{% url 'bidding:auction_status' %}")
+      .then(r => r.json())
+      .then(info => {
+        document.getElementById('server-time-text').textContent = new Date().toLocaleString();
+        const ns = document.getElementById('not-started-section'),
+              fs = document.getElementById('finished-section'),
+              ac = document.getElementById('active-section');
+        ns.innerHTML = fs.innerHTML = ac.innerHTML = '';
 
-      const notStarted = document.getElementById('not-started-section');
-      const finished = document.getElementById('finished-section');
-      const active = document.getElementById('active-section');
-
-      notStarted.innerHTML = '';
-      finished.innerHTML = '';
-      active.innerHTML = '';
-
-      if (info.status === 'not_started') {
-        notStarted.innerHTML = `
-          <h2>Auction has not started yet.</h2>
-          <p><strong>Time until start:</strong> ${info.time_until_start} seconds</p>
-        `;
-      } else if (info.status === 'finished') {
-        finished.innerHTML = `
-          <h2>Auction is finished.</h2>
-          <p><strong>Time since auction ended:</strong> ${info.time_since_end} seconds ago</p>
-        `;
-      } else if (info.status === 'active') {
-        active.innerHTML = `
-          <h2>${info.player.name}</h2>
-          ${
-            info.player.profile_picture_url
-              ? `<img src="${info.player.profile_picture_url}" alt="Profile Picture" />`
-              : ''
+        if (info.status==='not_started') {
+          ns.innerHTML = `<h2>Auction not started</h2>
+                          <p>Starts in ${info.time_until_start}s</p>`;
+        }
+        else if (info.status==='finished') {
+          fs.innerHTML = `<h2>Auction ended</h2>
+                          <p>Ended ${info.time_since_end}s ago</p>`;
+        }
+        else if (info.status==='active') {
+          let p = info.player;
+          let html=`
+            <h2>${p.name}</h2>
+            ${p.profile_picture_url?`<img src="${p.profile_picture_url}" />`:''}
+            <p><strong>Age:</strong> ${p.age}</p>
+            <p><strong>Position:</strong> ${p.playing_position}</p>
+            <p><strong>Batch:</strong> ${p.batch}</p>
+            <p><strong>Contact:</strong> ${p.contact_number}</p>
+            <p id="assigned-team-${p.id}"><strong>Last Bid:</strong> ${p.assigned_team}</p>
+            <p id="price-${p.id}"><strong>Price:</strong> ${p.price}</p>
+            <p><strong>Remaining:</strong> ${info.seconds_remaining}s</p>
+            <p><strong>Total Left:</strong> ${info.total_time_left}s</p>
+          `;
+          if (userIsAuthenticated==="True" && userRole==="team" && p.assigned_team_id!==loggedInTeamId) {
+            html += `<button class="place-bid-btn" data-player-id="${p.id}">Place bid</button>`;
           }
-          <p><strong>Age:</strong> ${info.player.age}</p>
-          <p><strong>Position:</strong> ${info.player.playing_position}</p>
-          <p><strong>Batch:</strong> ${info.player.batch}</p>
-          <p><strong>Contact:</strong> ${info.player.contact_number}</p>
-          <p id="assigned-team-${info.player.id}">Last Bid: ${info.player.assigned_team}</p>
-          <p id="price-${info.player.id}">Last Bid Price: ${info.player.price}</p>
-          <p><strong>Seconds Remaining for This Player:</strong> ${info.seconds_remaining}</p>
-          <p><strong>Total Time Left in Auction:</strong> ${info.total_time_left} seconds</p>
-          ${
-            "{{ user.is_authenticated }}" === "True" &&
-            "{{ user.role }}" === "team" &&
-            info.player.assigned_team !== "{{ request.user }}"
-              ? `<button class="place-bid-btn" data-player-id="${info.player.id}">Place bid</button>`
-              : ''
-          }
-        `;
-        attachBidButtonListener();
+          ac.innerHTML = html;
+          attachBidListener();
+        }
+      })
+      .catch(console.error);
+  }
+
+  function getCookie(n) {
+    let v="; "+document.cookie,
+        parts=v.split("; "+n+"=");
+    return parts.length===2?parts.pop().split(';').shift():null;
+  }
+
+  let pausePoll = false;
+
+  function placeBid(id) {
+    pausePoll = true;
+    let btn = document.querySelector(`button[data-player-id="${id}"]`);
+    btn.textContent='Bidding...';
+    fetch("{% url 'bidding:place_bid' %}", {
+      method:'POST',
+      headers:{
+        'Content-Type':'application/json',
+        'X-CSRFToken':getCookie('csrftoken')
+      },
+      body:JSON.stringify({player_id:id})
+    })
+    .then(r=>r.json())
+    .then(data=>{
+      if(!data.success) alert(data.message||'Fail');
+      else {
+        document.getElementById(`assigned-team-${id}`)
+                .textContent = `Last Bid: ${data.assigned_team}`;
+        document.getElementById(`price-${id}`)
+                .textContent = `Price: ${data.price}`;
       }
     })
-    .catch(err => console.error('Polling failed', err));
-}
+    .catch(console.error)
+    .finally(()=>{
+      btn.textContent='Place bid';
+      setTimeout(()=>pausePoll=false,1000);
+    });
+  }
+
+  function attachBidListener(){
+    let b = document.querySelector('.place-bid-btn');
+    if(b) b.onclick = ()=>placeBid(b.dataset.playerId);
+  }
+
+  setInterval(()=>{
+    if(!pausePoll) updateAuctionInfo();
+  },500);
+
+  updateAuctionInfo();
 </script>
 {% endblock %}
-
-

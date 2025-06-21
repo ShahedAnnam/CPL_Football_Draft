@@ -32,5 +32,5 @@ def complete_profile(request):
 
 @login_required
 def team_list(request):
-    teams = Team.objects.all()
+    teams = Team.objects.all().prefetch_related('players')  # players from related_name in Player.assigned_team FK
     return render(request, 'team/team_list.html', {'teams': teams})
