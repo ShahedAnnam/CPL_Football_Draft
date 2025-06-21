@@ -1,362 +1,130 @@
-/* static/css/player_profile.css */
 
-/* --- General Body & Background --- */
-body {
-    /* More dynamic, subtle background */
-    background: linear-gradient(135deg, #e0f7fa 0%, #c1eaf0 100%);
-    font-family: 'Poppins', 'Montserrat', 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; /* Prioritize Poppins */
-    color: #333;
-    min-height: 100vh; /* Ensure body takes full viewport height */
-    margin: 0;
-    display: flex;
-    flex-direction: column;
+body{
+    background: linear-gradient(135deg, #667eea, #764ba2);
 }
 
-/* Page Container for vertical centering (makes card appear in middle of remaining space) */
-.profile-page-container {
-    flex-grow: 1; /* Allow it to take up available space */
+.profile-container {
     display: flex;
-    align-items: center; /* Vertically center */
-    justify-content: center; /* Horizontally center */
-    padding: 40px 20px; /* Generous padding around the card */
+    justify-content: center;
+    padding: 50px 20px;
+    /* background-color: #6ea5ff3c; */
+    min-height: 100vh;
 }
 
-/* --- Main Profile Card --- */
-.player-profile-card {
-    border-radius: 25px; /* Even more rounded corners */
-    border: none;
+.profile-card.horizontal-layout {
+    display: flex;
+    background-color: #fff;
+    box-shadow: 0 6px 25px rgba(0, 0, 0, 0.1);
+    border-radius: 12px;
+    max-width: 950px;
+    width: 100%;
     overflow: hidden;
-    max-width: 950px; /* Slightly wider */
-    width: 100%; /* Take full width up to max-width */
-    /* More sophisticated shadow for depth and lift */
-    box-shadow: 0 20px 60px rgba(0, 0, 0, 0.18); /* Stronger, diffused shadow */
-    background: #ffffff;
-    position: relative; /* For potential pseudo-elements or overlays */
-    /* Add a subtle pseudo-element for extra flair */
-    &::before {
-        content: '';
-        position: absolute;
-        top: 0;
-        left: 0;
-        right: 0;
-        height: 5px; /* A thin accent line at the top */
-        background: linear-gradient(to right, #007bff, #8a2be2); /* Blue to purple gradient */
-        border-radius: 25px 25px 0 0;
-    }
+    padding: 0;
 }
 
-/* --- Profile Image Section --- */
-.profile-image-section {
-    background: linear-gradient(to bottom right, #007bff 0%, #6a11cb 100%); /* Blue to purple gradient */
+.profile-image {
+    flex: 0 0 320px;
+    background-color: #268de7b4;
     display: flex;
     align-items: center;
     justify-content: center;
-    padding: 40px; /* Increased padding */
-    min-height: 350px; /* Ensure minimum height */
-    position: relative; /* For overlay if desired */
-    overflow: hidden; /* Ensure image doesn't spill over */
-    border-radius: 25px 0 0 25px; /* Match card radius on left side */
-}
-/* Responsive border radius for stacked layout */
-@media (max-width: 767.98px) {
-    .profile-image-section {
-        border-radius: 25px 25px 0 0;
-        min-height: 280px; /* Adjust height for smaller screens */
-    }
+    padding: 30px;
 }
 
-
-.profile-img {
-    width: 250px; /* Even larger width */
-    height: 320px; /* Even larger height for rectangular shape */
-    object-fit: cover;
-    border-radius: 15px; /* Slightly more rounded rectangle */
-    border: 7px solid rgba(255, 255, 255, 0.9); /* Thicker white border */
-    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.4); /* Stronger image shadow */
-    transition: transform 0.4s cubic-bezier(0.25, 0.8, 0.25, 1); /* Smoother transition */
+.profile-image img {
+    width: 100%;
+    height: auto;
+    object-fit: contain;
+    border: 4px solid #ffffff;
+    box-shadow: 0 6px 15px rgba(0, 0, 0, 0.2);
+    border-radius: 10px;
 }
 
-.profile-img:hover {
-    transform: scale(1.05) rotate(1deg); /* More pronounced zoom and subtle rotate on hover */
+.no-image {
+    font-size: 120px;
+    color: #bbb;
 }
 
-.no-profile-img {
-    width: 250px; /* Match image size */
-    height: 320px; /* Match image size */
-    border-radius: 15px;
-    background-color: rgba(255, 255, 255, 0.15); /* Lighter background */
-    border: 3px dashed rgba(255, 255, 255, 0.7); /* Stronger dashed border */
-    color: rgba(255, 255, 255, 0.85); /* Brighter icon color */
-    font-size: 9rem; /* Even larger icon */
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+.profile-details {
+    flex: 1;
+    padding: 30px;
+    background-color: #fafafa;
 }
 
-/* --- Profile Details Section --- */
-.profile-details-section .card-body {
-    padding: 50px; /* More generous padding */
+.profile-name-section h2 {
+    margin: 0;
+    font-size: 2rem;
+    font-weight: bold;
+    color: #222;
 }
 
-.player-name-heading {
-    font-size: 3.2rem; /* Even larger, more impactful name */
-    font-weight: 900; /* Super bold */
-    color: #1a2a3a; /* Very dark blue for impact */
-    margin-bottom: 35px !important;
-    position: relative;
-    padding-bottom: 12px; /* More space for the pseudo-underline */
-    text-shadow: 2px 2px 4px rgba(0,0,0,0.08); /* Subtle text shadow */
+.profile-name-section p {
+    color: #555;
+    margin-bottom: 20px;
+    font-size: 0.95rem;
 }
 
-.player-name-heading::after {
-    content: '';
-    position: absolute;
-    left: 0;
-    bottom: 0;
-    width: 80px; /* Longer underline */
-    height: 5px; /* Thicker underline */
-    background: linear-gradient(to right, #007bff, #8a2be2); /* Gradient underline */
-    border-radius: 3px;
+.profile-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 0.95rem;
 }
 
-/* Details Grid Layout */
-.details-grid {
-    display: grid;
-    grid-template-columns: 1fr; /* Default to single column */
-    gap: 25px; /* Increased space between items */
+.profile-table th,
+.profile-table td {
+    text-align: left;
+    padding: 10px 15px;
+    vertical-align: middle;
 }
 
-@media (min-width: 768px) {
-    .details-grid {
-        grid-template-columns: 1fr 1fr; /* Two columns on medium screens and up */
-        column-gap: 50px; /* More space between columns */
-    }
+.profile-table th {
+    width: 40%;
+    font-weight: bold;
+    background-color: #f2f2f2;
+    color: #333;
 }
 
-.detail-item {
-    display: flex;
-    flex-direction: column;
-    padding-bottom: 18px; /* More padding */
-    border-bottom: 1px solid #f0f2f5; /* Solid, lighter separator */
-    transition: background-color 0.2s ease; /* Smooth hover effect */
+.profile-table td {
+    color: #222;
 }
 
-.detail-item:last-child {
-    border-bottom: none;
-}
-
-.detail-item:hover {
-    background-color: #fcfdff; /* Very subtle highlight on hover */
-}
-
-.detail-label {
-    font-size: 1rem; /* Slightly larger label */
-    font-weight: 700;
-    color: #6c757d; /* Muted grey for labels */
-    text-transform: uppercase;
-    letter-spacing: 0.8px; /* More letter spacing */
-    margin-bottom: 8px; /* More space between label and value */
-    display: flex;
-    align-items: center;
-    transition: color 0.2s ease;
-}
-
-.detail-item:hover .detail-label {
-    color: #007bff; /* Label changes color on hover */
-}
-
-.detail-label .fas {
-    margin-right: 10px; /* More space for icon */
-    color: #007bff; /* Primary blue icon color */
-    font-size: 1.2rem; /* Larger icon */
-    transition: transform 0.2s ease;
-}
-
-.detail-item:hover .detail-label .fas {
-    transform: translateX(3px); /* Icon moves slightly on hover */
-}
-
-.detail-value {
-    font-size: 1.25rem; /* Even larger, more prominent value */
-    font-weight: 600; /* Still strong */
-    color: #212529; /* Almost black for strong contrast */
-    line-height: 1.4; /* Better readability */
-    word-wrap: break-word;
-    font-family: 'Roboto', sans-serif; /* A slightly different font for values for contrast */
-}
-
-/* Category Specific Styling */
-.player-category {
-    display: inline-block;
-    padding: 6px 14px; /* More padding */
-    border-radius: 10px; /* More rounded */
-    font-size: 0.95rem; /* Slightly larger text */
-    font-weight: 700;
-    text-transform: uppercase;
-    letter-spacing: 1px; /* More pronounced spacing */
-    color: white;
-    box-shadow: 0 4px 10px rgba(0,0,0,0.25); /* Stronger shadow */
-    transition: transform 0.2s ease, box-shadow 0.2s ease;
-}
-
-.player-category:hover {
-    transform: translateY(-2px); /* Lift on hover */
-    box-shadow: 0 6px 15px rgba(0,0,0,0.3);
-}
-
-.player-category-a { background-color: #28a745; } /* Green */
-.player-category-b { background-color: #ffc107; } /* Orange */
-.player-category-c { background-color: #dc3545; } /* Red */
-
-/* Edit Profile Button */
-.btn-edit-profile {
-    background-image: linear-gradient(to right, #0056b3 0%, #563d7c 100%); /* Darker, richer gradient */
-    color: white;
-    border: none;
-    padding: 14px 35px; /* Larger button */
-    font-size: 1.1rem;
+.category-tag {
+    padding: 5px 12px;
+    border-radius: 10px;
+    font-size: 0.85rem;
     font-weight: 600;
-    border-radius: 35px; /* More pill-like */
-    transition: all 0.4s ease-in-out; /* Smoother transition */
-    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.3); /* Stronger shadow */
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    text-transform: uppercase; /* Uppercase text */
-    letter-spacing: 1px; /* Spacing for buttons */
-}
-
-.btn-edit-profile:hover {
-    background-image: linear-gradient(to left, #0056b3 0%, #563d7c 100%);
-    box-shadow: 0 12px 30px rgba(0, 0, 0, 0.4);
-    transform: translateY(-4px); /* More pronounced lift */
     color: white;
+    text-transform: uppercase;
 }
 
-.btn-edit-profile .fas {
-    margin-right: 12px; /* More space for icon */
-    font-size: 1.2rem;
+.category-a {
+    background-color: #28a745;
+}
+.category-b {
+    background-color: #ffc107;
+    color: black;
+}
+.category-c {
+    background-color: #dc3545;
 }
 
-/* --- Responsive Adjustments --- */
-@media (max-width: 991.98px) {
-    .player-profile-card {
-        max-width: 700px; /* Adjust max-width for md screens */
-    }
+.profile-footer {
+    margin-top: 20px;
+    text-align: right;
 }
 
-@media (max-width: 767.98px) {
-    .player-profile-card .row.g-0 {
-        flex-direction: column; /* Stack image and details vertically */
-    }
-
-    .profile-image-section {
-        border-radius: 25px 25px 0 0; /* Adjust border-radius for stacked layout */
-        min-height: 250px;
-        padding: 25px;
-    }
-
-    .profile-img, .no-profile-img {
-        width: 180px;
-        height: 230px;
-        border-width: 4px; /* Thinner border for smaller images */
-        box-shadow: 0 6px 15px rgba(0, 0, 0, 0.3);
-    }
-
-    .profile-details-section .card-body {
-        padding: 35px 25px; /* Adjust padding */
-    }
-
-    .player-name-heading {
-        font-size: 2.5rem; /* Smaller but still strong */
-        text-align: center;
-        margin-bottom: 25px !important;
-    }
-    .player-name-heading::after {
-        width: 60px;
-        height: 3px;
-        left: 50%;
-        transform: translateX(-50%);
-    }
-
-    .details-grid {
-        gap: 15px; /* Smaller gap */
-    }
-
-    .detail-item {
-        padding-bottom: 10px;
-    }
-
-    .detail-label {
-        font-size: 0.9rem;
-        margin-bottom: 3px;
-    }
-
-    .detail-label .fas {
-        margin-right: 6px;
-        font-size: 1rem;
-    }
-
-    .detail-value {
-        font-size: 1.05rem;
-    }
-
-    .player-category {
-        padding: 5px 12px;
-        font-size: 0.85rem;
-        border-radius: 8px;
-    }
-
-    .btn-edit-profile {
-        width: 100%;
-        padding: 10px 25px;
-        font-size: 1rem;
-        border-radius: 25px;
-        box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
-    }
-
-    .btn-edit-profile .fas {
-        margin-right: 10px;
-    }
+.btn-edit {
+    background: linear-gradient(to right, #007bff, #5a32a3);
+    color: white;
+    padding: 10px 25px;
+    font-size: 0.95rem;
+    border-radius: 25px;
+    text-decoration: none;
+    font-weight: 600;
+    transition: all 0.3s ease;
 }
 
-@media (max-width: 575.98px) {
-    .profile-page-container {
-        padding: 20px 10px;
-    }
-
-    .player-profile-card {
-        border-radius: 15px; /* Smaller radius for very small screens */
-    }
-    .player-profile-card::before {
-        height: 3px;
-        border-radius: 15px 15px 0 0;
-    }
-
-    .profile-image-section {
-        min-height: 200px;
-        padding: 20px;
-    }
-
-    .profile-img, .no-profile-img {
-        width: 150px;
-        height: 190px;
-    }
-
-    .profile-details-section .card-body {
-        padding: 25px 20px;
-    }
-
-    .player-name-heading {
-        font-size: 2rem;
-        margin-bottom: 20px !important;
-    }
-
-    .details-grid {
-        gap: 10px;
-    }
-    .detail-item {
-        padding-bottom: 8px;
-    }
+.btn-edit:hover {
+    background: linear-gradient(to left, #007bff, #5a32a3);
+    transform: translateY(-2px);
 }

@@ -8,19 +8,15 @@ let pausePolling = false;
 
 function placeBid(playerId) {
   pausePolling = true;
-  console.log('Placing bid for player:', playerId);
 
   const button = document.querySelector(`[data-player-id="${playerId}"]`);
   if (button) button.textContent = 'Bidding...';
 
   fetch('/authority/increase-duration/5/')
     .then(res => res.json())
-    .then(data => {
-      console.log('Duration increased:', data);
-    })
     .catch(err => console.error('Failed to increase duration:', err));
 
-  fetch('place-bid/', {
+  fetch('/bidding/place-bid/', {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',
@@ -32,9 +28,7 @@ function placeBid(playerId) {
     .then(data => {
       if (!data.success) alert(data.message || 'Bid failed');
     })
-    .catch(error => {
-      console.error('Error placing bid:', error);
-    })
+    .catch(error => console.error('Error placing bid:', error))
     .finally(() => {
       if (button) button.textContent = 'Place bid';
       setTimeout(() => {
@@ -57,3 +51,60 @@ function attachBidButtonListener() {
 setInterval(() => {
   if (!pausePolling) updateAuctionInfo();
 }, 500);
+
+
+// ----------------------------
+// Auction control buttons (new)
+// ----------------------------
+
+document.addEventListener('DOMContentLoaded', () => {
+  const startBtn = document.getElementById('start-auction-btn');
+  const pauseBtn = document.getElementById('pause-auction-btn');
+  const endBtn = document.getElementById('end-auction-btn');
+
+  if (startBtn) {
+    startBtn.addEventListener('click', () => {
+      fetch('/authority/start-auction/')
+        .then(res => res.json())
+        .then(data => {
+          if (data.success) {
+            console.log('Auction started');
+            startBtn.disabled = true;
+            pauseBtn.disabled = false;
+            endBtn.disabled = false;
+          } else {
+            alert(data.error || 'Failed to start auction');
+          }
+        });
+    });
+  }
+
+  if (pauseBtn) {
+    pauseBtn.addEventListener('click', () => {
+      fetch('/authority/pause-auction/')
+        .then(res => res.json())
+        .then(data => {
+          if (data.success) {
+            console.log('Auction paused');
+            pauseBtn.textContent = 'Resume Auction';
+            pauseBtn.id = 'resume-auction-btn';
+          }
+        });
+    });
+  }
+
+  if (endBtn) {
+    endBtn.addEventListener('click', () => {
+      fetch('/authority/end-auction/')
+        .then(res => res.json())
+        .then(data => {
+          if (data.success) {
+            console.log('Auction ended');
+            startBtn.disabled = false;
+            pauseBtn.disabled = true;
+            endBtn.disabled = true;
+          }
+        });
+    });
+  }
+});

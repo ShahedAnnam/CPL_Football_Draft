@@ -1,16 +1,180 @@
-<h2>Set Auction Settings</h2>
+{% extends 'CPL/base.html' %}
+{% load static %}
 
-{% if error %}
-    <p style="color: red">{{ error }}</p>
-{% endif %}
+{% block head %}
+<link rel="stylesheet" href="{% static 'authority/styleSet_auction.css' %}">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css" crossorigin="anonymous" referrerpolicy="no-referrer" />
+{% endblock %}
 
-<form method="post">
+{% block content %}
+<div class="auction-container">
+  <h1 class="page-title">Auction Settings</h1>
+
+  {% if error %}
+    <div class="alert alert-error">{{ error }}</div>
+  {% endif %}
+
+  <form method="post" id="auction-settings-form" class="settings-form">
     {% csrf_token %}
-    <label for="start_time">Auction Start Time (Y-m-d H:M:S):</label><br>
-    <input type="text" name="start_time" value="{{ current_start|date:'Y-m-d H:i:s' }}"><br><br>
+    <div class="form-group">
+      <label for="start_time"><i class="fa fa-clock"></i> Auction Start Time</label>
+      <input type="datetime-local" id="start_time" name="start_time" value="{{ current_start|date:'Y-m-d\\TH:i' }}" required>
+    </div>
 
-    <label for="duration">Player Duration (in seconds):</label><br>
-    <input type="number" name="duration" value="{{ current_duration }}"><br><br>
+    <div class="form-group">
+      <label for="duration"><i class="fa fa-timer"></i> Player Duration (seconds)</label>
+      <input type="number" id="duration" name="duration" min="1" value="{{ current_duration|default_if_none:'60' }}" required>
+    </div>
 
-    <button type="submit">Save</button>
-</form>
+    <button type="submit" class="btn btn-save"><i class="fas fa-save"></i> Save Settings</button>
+  </form>
+
+  <hr>
+
+  <div class="auction-control">
+    <button id="start-auction-btn" class="btn btn-start-auction">
+      <i class="fas fa-play-circle"></i> Start Auction
+    </button>
+    <button id="pause-auction-btn" class="btn btn-pause-auction" disabled>
+      <i class="fas fa-pause-circle"></i> Pause Auction
+    </button>
+    <button id="end-auction-btn" class="btn btn-end-auction" disabled>
+      <i class="fas fa-stop-circle"></i> End Auction
+    </button>
+
+    <div id="countdown-timer" class="countdown hidden">
+      Auction will start in <span id="countdown-seconds">10</span> seconds...
+    </div>
+  </div>
+
+  <hr>
+
+  <div class="duration-control">
+    <h2>Adjust Player Duration</h2>
+    <div class="buttons-group">
+      <button id="init-duration-btn" class="btn btn-init-duration" data-seconds="10">
+        Initialize Duration to 10s
+      </button>
+      <button id="increase-duration-btn" class="btn btn-increase-duration" data-seconds="5">
+        Increase Duration by 5s
+      </button>
+    </div>
+    <div id="duration-message" class="duration-message"></div>
+  </div>
+</div>
+
+<script>
+document.addEventListener('DOMContentLoaded', function () {
+  const startBtn = document.getElementById('start-auction-btn');
+  const pauseBtn = document.getElementById('pause-auction-btn');
+  const endBtn = document.getElementById('end-auction-btn');
+  const countdownEl = document.getElementById('countdown-timer');
+  const countdownSecondsEl = document.getElementById('countdown-seconds');
+  const durationMessage = document.getElementById('duration-message');
+
+  let countdown = 10;
+  let countdownInterval = null;
+  let isPaused = false;
+
+  function resetCountdown() {
+    countdown = 10;
+    countdownSecondsEl.textContent = countdown;
+  }
+
+  function ajaxRequest(url, successCallback, errorCallback) {
+    fetch(url, {
+      method: 'GET',
+      headers: { 'X-Requested-With': 'XMLHttpRequest' },
+      credentials: 'same-origin',
+    })
+      .then(res => res.json())
+      .then(data => {
+        if (data.success) {
+          successCallback?.();
+        } else {
+          errorCallback?.(data.error || 'Unknown error');
+        }
+      })
+      .catch(err => {
+        errorCallback?.('Request failed.');
+      });
+  }
+
+  startBtn.addEventListener('click', () => {
+    ajaxRequest('/bidding/start-auction/', () => {
+      startBtn.disabled = true;
+      pauseBtn.disabled = false;
+      endBtn.disabled = false;
+      countdownEl.classList.remove('hidden');
+      resetCountdown();
+
+      if (countdownInterval) clearInterval(countdownInterval);
+      countdownInterval = setInterval(() => {
+        if (!isPaused) {
+          countdown--;
+          countdownSecondsEl.textContent = countdown;
+          if (countdown <= 0) {
+            clearInterval(countdownInterval);
+            countdownEl.textContent = 'Auction started!';
+            setTimeout(() => {
+              countdownEl.classList.add('hidden');
+              countdownEl.innerHTML = 'Auction will start in <span id="countdown-seconds">10</span> seconds...';
+              resetCountdown();
+            }, 3000);
+          }
+        }
+      }, 1000);
+    }, (err) => alert('Start failed: ' + err));
+  });
+
+  pauseBtn.addEventListener('click', () => {
+    ajaxRequest('/bidding/pause-auction/', () => {
+      isPaused = !isPaused;
+      pauseBtn.innerHTML = isPaused
+        ? '<i class="fas fa-play-circle"></i> Resume Auction'
+        : '<i class="fas fa-pause-circle"></i> Pause Auction';
+    });
+  });
+
+  endBtn.addEventListener('click', () => {
+    ajaxRequest('/bidding/end-auction/', () => {
+      if (countdownInterval) clearInterval(countdownInterval);
+      countdownEl.classList.add('hidden');
+      countdownEl.innerHTML = 'Auction will start in <span id="countdown-seconds">10</span> seconds...';
+      resetCountdown();
+      startBtn.disabled = false;
+      pauseBtn.disabled = true;
+      pauseBtn.innerHTML = '<i class="fas fa-pause-circle"></i> Pause Auction';
+      endBtn.disabled = true;
+      isPaused = false;
+    });
+  });
+
+  document.getElementById('init-duration-btn').addEventListener('click', function () {
+    const seconds = this.getAttribute('data-seconds');
+    ajaxRequest(`/authority/init-duration/${seconds}/`, () => {
+      durationMessage.textContent = `Duration initialized to ${seconds} seconds.`;
+      durationMessage.classList.remove('error');
+      durationMessage.classList.add('success');
+    }, (err) => {
+      durationMessage.textContent = 'Error: ' + err;
+      durationMessage.classList.add('error');
+      durationMessage.classList.remove('success');
+    });
+  });
+
+  document.getElementById('increase-duration-btn').addEventListener('click', function () {
+    const seconds = this.getAttribute('data-seconds');
+    ajaxRequest(`/authority/increase-duration/${seconds}/`, () => {
+      durationMessage.textContent = `Duration increased by ${seconds} seconds.`;
+      durationMessage.classList.remove('error');
+      durationMessage.classList.add('success');
+    }, (err) => {
+      durationMessage.textContent = 'Error: ' + err;
+      durationMessage.classList.add('error');
+      durationMessage.classList.remove('success');
+    });
+  });
+});
+</script>
+{% endblock %}

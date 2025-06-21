@@ -1,5 +1,9 @@
 /* Auction Page Styles */
 
+body{
+    background: linear-gradient(135deg, #667eea, #764ba2);
+}
+
 .auction-container {
   max-width: 500px;
   margin: 3rem auto;

@@ -1,76 +1,80 @@
 {% extends 'CPL/base.html' %}
 {% load static %}
 
-{% block extra_head %} {# Using extra_head for consistency with previous changes #}
-<link rel="stylesheet" href="{% static 'css/player_profile.css' %}">
-{# Ensure Font Awesome is loaded in base.html or here if not already #}
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css" integrity="sha512-SnH5WK+bZxgPHs44uWIX+LLJAJ9/2PkPKZ5QiAj6Ta86w+fsb2TkcmfRyVX3pBnMFcV7oQPJkl9QevSCWr3W6A==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+{% block head %}
+<link rel="stylesheet" href="{% static 'player/stylePlayer_profile.css' %}">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css" integrity="sha512-SnH5WK..." crossorigin="anonymous" referrerpolicy="no-referrer" />
 {% endblock %}
 
 {% block content %}
-<div class="profile-page-container py-5"> {# Added a wrapper for potential full-page styling #}
-    <div class="player-profile-card card mx-auto shadow-lg"> {# Added shadow-lg #}
-        <div class="row g-0">
-            <div class="col-md-4 profile-image-section text-center d-flex align-items-center justify-content-center p-3"> {# Added p-3 for internal padding #}
-                {% if player.profile_picture %}
-                    <img src="{{ player.profile_picture.url }}" alt="{{ player.name }}'s Profile Picture" class="profile-img img-fluid">
-                {% else %}
-                    <div class="no-profile-img d-flex align-items-center justify-content-center">
-                        <i class="fas fa-user-circle"></i> {# Placeholder icon #}
-                    </div>
-                {% endif %}
+<div class="profile-container">
+    <div class="profile-card horizontal-layout">
+        <div class="profile-image">
+            {% if player.profile_picture %}
+                <img src="{{ player.profile_picture.url }}" alt="Profile Picture">
+            {% else %}
+                <i class="fas fa-user-circle no-image"></i>
+            {% endif %}
+        </div>
+
+        <div class="profile-details">
+            <div class="profile-name-section">
+                <h2>{{ player.name }}</h2>
+                <p>@{{ player.user.username }}</p>
             </div>
-            <div class="col-md-8 profile-details-section">
-                <div class="card-body p-4"> {# Increased padding #}
-                    <h2 class="player-name-heading mb-4">{{ player.name }}</h2> {# Changed to h2, added mb-4 #}
 
-                    <div class="details-grid">
-                        <div class="detail-item">
-                            <span class="detail-label"><i class="fas fa-user"></i> Username:</span>
-                            <span class="detail-value">{{ player.user.username }}</span>
-                        </div>
-                        <div class="detail-item">
-                            <span class="detail-label"><i class="fas fa-cake-candles"></i> Age:</span>
-                            <span class="detail-value">{{ player.age }}</span>
-                        </div>
-                        <div class="detail-item">
-                            <span class="detail-label"><i class="fas fa-baseball-bat-ball"></i> Position:</span> {# Generic sports icon #}
-                            <span class="detail-value">{{ player.playing_position }}</span>
-                        </div>
-                        <div class="detail-item">
-                            <span class="detail-label"><i class="fas fa-users-class"></i> Batch:</span>
-                            <span class="detail-value">{{ player.batch }}</span>
-                        </div>
-                        <div class="detail-item">
-                            <span class="detail-label"><i class="fas fa-phone"></i> Contact:</span>
-                            <span class="detail-value">{{ player.contact_number }}</span>
-                        </div>
-                        <div class="detail-item">
-                            <span class="detail-label"><i class="fas fa-graduation-cap"></i> Category:</span>
-                            <span class="detail-value player-category player-category-{{ player.player_class|lower }}">
-                                {% if player.player_class %}{{ player.player_class }}{% else %}N/A{% endif %}
-                            </span>
-                        </div>
-                        <div class="detail-item">
-                            <span class="detail-label"><i class="fas fa-people-group"></i> Assigned Team:</span>
-                            <span class="detail-value">{{ player.assigned_team|default:"Not Assigned Yet" }}</span> {# Default for clarity #}
-                        </div>
-                        <div class="detail-item">
-                            <span class="detail-label"><i class="fas fa-calendar-alt"></i> Registered At:</span>
-                            <span class="detail-value">{{ player.registered_at|date:"F j, Y, g:i a" }}</span> {# Formatted date #}
-                        </div>
-                    </div>
+            <table class="profile-table">
+                <tr>
+                    <th><i class="fas fa-cake-candles"></i> Age</th>
+                    <td>{{ player.age }}</td>
+                </tr>
+                <tr>
+                    <th><i class="fas fa-baseball-bat-ball"></i> Position</th>
+                    <td>{{ player.playing_position }}</td>
+                </tr>
+                <tr>
+                    <th><i class="fas fa-users-class"></i> Batch</th>
+                    <td>{{ player.batch }}</td>
+                </tr>
+                <tr>
+                    <th><i class="fas fa-phone"></i> Contact</th>
+                    <td>{{ player.contact_number }}</td>
+                </tr>
+                <tr>
+                    <th><i class="fas fa-graduation-cap"></i> Category</th>
+                    <td>
+                        {% if player.player_class %}
+                            <span class="category-tag category-{{ player.player_class|lower }}">{{ player.player_class }}</span>
+                        {% else %}
+                            N/A
+                        {% endif %}
+                    </td>
+                </tr>
+                <tr>
+                    <th><i class="fas fa-sack-dollar"></i> 
+                        {% if player.assigned_team != "Not bought yet" %}Final Price{% else %}Base Price{% endif %}
+                    </th>
+                    <td>
+                        {% if player.player_class %}৳ {{ player.price }}{% else %}N/A{% endif %}
+                    </td>
+                </tr>
+                <tr>
+                    <th><i class="fas fa-people-group"></i> Team</th>
+                    <td>{{ player.assigned_team }}</td>
+                </tr>
+                <tr>
+                    <th><i class="fas fa-calendar-alt"></i> Registered</th>
+                    <td>{{ player.registered_at|date:"F j, Y, g:i a" }}</td>
+                </tr>
+            </table>
 
-                    {% if user.is_authenticated and user == player.user %}
-                    <div class="text-end mt-4">
-                        <a href="{% url 'player:edit_profile' %}" class="btn btn-edit-profile">
-                            <i class="fas fa-edit me-2"></i> Edit Profile
-                        </a>
-                    </div>
-                    {% endif %}
-
-                </div>
+            {% if user.is_authenticated and user == player.user %}
+            <div class="profile-footer">
+                <a href="{% url 'player:complete_profile' %}" class="btn-edit">
+                    <i class="fas fa-edit"></i> Edit Profile
+                </a>
             </div>
+            {% endif %}
         </div>
     </div>
 </div>

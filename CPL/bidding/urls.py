@@ -7,22 +7,13 @@ print("DEBUG")
 app_name = 'bidding'
 
 urlpatterns = [
-    #path('', views.show_cards, name='show_cards'),  # Default page
-    #path("place-bid/", views.place_bid, name="place_bid"),
-    #path("perform-short/<int:player_id>/" , views.dopoll , name = "dopoll"), 
-    
     path('', views.bidding_page, name='bidding_page'),
     path('server-time/', views.server_time, name='server_time'),
     path('current-player/place-bid/', views.place_bid, name='place_bid'),
     path('perform-short/<int:player_id>/', views.perform_short, name='perform_short'),
     path('current-player/', views.current_player_view, name='current_player_view'),
     path('current-player/auction-status/', views.auction_status, name='auction_status'),
-    #path('api/player-bid/<int:player_id>/', views.get_player_bid_data, name='get_player_bid_data'),
-
-    #path('api/player-bid/<int:player_id>/', views.get_player_bid_data, name='player_bid_data'),
-   
-    #path('', views.show_cards, name='show_cards'),  # Default page
-    #path('start/', views.start_bidding, name='start-bidding'),
-    #path('place/<int:player_id>/', views.place_bid, name='place-bid'),
-    #path('results/', views.bidding_results, name='bidding-results'),
+    path('start-auction/', views.start_auction, name='start-auction'),
+    path('pause-auction/', views.pause_auction, name='pause-auction'),
+    path('end-auction/', views.end_auction, name='end-auction'),
 ]
