@@ -1,0 +1,129 @@
+body {
+  background: linear-gradient(135deg, #667eea, #764ba2);
+  font-family: 'Source Sans 3', sans-serif;
+  color: #f0f0f0;
+}
+
+.profile-wrapper {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 80px 20px;
+  min-height: 100vh;
+}
+
+.profile-card {
+  max-width: 520px;
+  width: 100%;
+  background: #1e1e2f;
+  border-radius: 16px;
+  padding: 2.5rem;
+  box-shadow: 0 8px 25px rgba(243, 156, 18, 0.4);
+  animation: fadeIn 0.4s ease;
+}
+
+.profile-card h2 {
+  font-family: 'Merriweather', serif;
+  font-size: 2rem;
+  font-weight: 700;
+  color: #f39c12;
+  text-shadow: 0 0 8px #f39c12aa;
+  margin-bottom: 1.5rem;
+}
+
+.profile-card h4 {
+  color: #f39c12;
+  margin: 1.5rem 0 1rem;
+}
+
+.profile-card p {
+  font-size: 1rem;
+  margin-bottom: 10px;
+  color: #ddd;
+}
+
+.profile-card form input {
+  width: 100%;
+  padding: 12px;
+  margin-bottom: 1rem;
+  border: 1px solid #444;
+  border-radius: 10px;
+  background-color: #2b2b45;
+  color: #f0f0f0;
+}
+
+.profile-card input:focus {
+  border-color: #f39c12;
+  box-shadow: 0 0 8px #f39c12aa;
+  outline: none;
+}
+
+/* Message */
+.alert-message {
+  background-color: #2ecc71;
+  padding: 10px 16px;
+  border-radius: 8px;
+  color: #fff;
+  margin-bottom: 1rem;
+  font-weight: 600;
+  text-align: center;
+}
+
+/* Buttons */
+.gold-btn {
+  background-color: #f39c12;
+  border: none;
+  padding: 12px;
+  border-radius: 30px;
+  color: #1e1e2f;
+  font-weight: bold;
+  width: 100%;
+  transition: all 0.3s ease;
+  box-shadow: 0 6px 18px #f39c12aa;
+  cursor: pointer;
+}
+
+.gold-btn:hover {
+  background-color: #e67e22;
+  transform: scale(1.03);
+  box-shadow: 0 8px 22px #f39c12cc;
+}
+
+.logout-btn {
+  background-color: #e74c3c;
+  border: none;
+  padding: 12px;
+  border-radius: 30px;
+  color: #fff;
+  font-weight: bold;
+  width: 100%;
+  transition: all 0.3s ease;
+  cursor: pointer;
+  box-shadow: 0 6px 18px #e74c3caa;
+}
+
+.logout-btn:hover {
+  background-color: #c0392b;
+  transform: scale(1.03);
+}
+
+/* Animation */
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(10px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+/* Target password validation hint list */
+.profile-card form ul {
+  padding-left: 1.2rem;
+  margin-bottom: 1rem;
+}
+
+.profile-card form ul li {
+  color: #f8c471 !important;  /* soft golden, visible on dark */
+  font-size: 0.9rem;
+  line-height: 1.5;
+  margin-bottom: 5px;
+}
+
+

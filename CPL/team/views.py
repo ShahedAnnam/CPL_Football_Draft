@@ -34,3 +34,18 @@ def complete_profile(request):
 def team_list(request):
     teams = Team.objects.all().prefetch_related('players')  # players from related_name in Player.assigned_team FK
     return render(request, 'team/team_list.html', {'teams': teams})
+
+from django.http import JsonResponse, Http404
+from .models import Team
+
+def team_budget_view(request, team_id):
+    try:
+        team = Team.objects.get(id=team_id)
+    except Team.DoesNotExist:
+        raise Http404("Team not found")
+
+    return JsonResponse({
+        "team_id": team.id,
+        "team_name": team.user.username,
+        "expense_budget": team.expense_budget
+    })

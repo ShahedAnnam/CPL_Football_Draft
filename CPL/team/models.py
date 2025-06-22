@@ -9,5 +9,7 @@ class Team(models.Model):
     slogan = models.CharField(max_length=255)
     logo = models.ImageField(upload_to='team_logos/')
     profile_pic = models.ImageField(upload_to='team_profiles/')
+    expense_budget = models.IntegerField(default=10000)
     def __str__(self):
         return self.user.username
+

@@ -1,44 +1,102 @@
-.complete-profile-container {
-    max-width: 600px;
-    margin: 50px auto;
-    padding: 0 15px;
+body {
+  background: linear-gradient(135deg, #667eea, #764ba2);
+  font-family: 'Source Sans 3', sans-serif;
+  color: #f0f0f0;
 }
 
-.profile-card {
-    background-color: #fff;
-    padding: 30px;
-    border-radius: 16px;
-    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+/* Container */
+.complete-profile-wrapper {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 70px 20px;
+  min-height: 100vh;
 }
 
-.profile-card h2 {
-    font-weight: 600;
-    color: #2c3e50;
+/* Card */
+.profile-form-card {
+  width: 100%;
+  max-width: 500px;
+  background-color: #1e1e2f;
+  padding: 2rem;
+  border-radius: 16px;
+  box-shadow: 0 8px 25px rgba(243, 156, 18, 0.4);
+  animation: fadeIn 0.4s ease;
+}
+
+.profile-form-card h2 {
+  font-family: 'Merriweather', serif;
+  font-size: 1.8rem;
+  font-weight: 700;
+  color: #f39c12;
+  text-align: center;
+  margin-bottom: 1.5rem;
+  text-shadow: 0 0 8px #f39c12aa;
+}
+
+/* Form fields */
+.form-group {
+  margin-bottom: 1.3rem;
 }
 
 .form-group label {
-    font-weight: 500;
-    color: #34495e;
+  display: block;
+  margin-bottom: 6px;
+  font-weight: 600;
+  color: #f8c471;
 }
 
 .form-group input,
-.form-group select {
-    width: 100%;
-    padding: 10px 12px;
-    border-radius: 8px;
-    border: 1px solid #ccc;
-    background-color: #f9f9f9;
+.form-group select,
+.form-group textarea {
+  width: 100%;
+  padding: 12px;
+  background-color: #2b2b45;
+  border: 1px solid #444;
+  border-radius: 10px;
+  color: #f0f0f0;
+  font-size: 1rem;
 }
 
+.form-group input:focus,
+.form-group select:focus,
+.form-group textarea:focus {
+  border-color: #f39c12;
+  box-shadow: 0 0 8px #f39c12aa;
+  outline: none;
+}
+
+/* Error message */
+.form-error {
+  color: #e74c3c;
+  font-size: 0.85rem;
+  margin-top: 5px;
+  padding-left: 5px;
+}
+
+/* Submit button */
 .submit-btn {
-    background-color: #3498db;
-    color: white;
-    padding: 10px 20px;
-    border-radius: 10px;
-    border: none;
-    transition: 0.3s ease;
+  width: 100%;
+  background-color: #f39c12;
+  color: #1e1e2f;
+  padding: 12px;
+  border: none;
+  border-radius: 30px;
+  font-weight: 700;
+  font-size: 1rem;
+  cursor: pointer;
+  box-shadow: 0 6px 16px #f39c12aa;
+  transition: all 0.3s ease;
+  margin-top: 10px;
 }
 
 .submit-btn:hover {
-    background-color: #2980b9;
+  background-color: #e67e22;
+  transform: scale(1.03);
+}
+
+/* Animation */
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(12px); }
+  to   { opacity: 1; transform: translateY(0); }
 }

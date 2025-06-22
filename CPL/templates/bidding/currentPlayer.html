@@ -58,8 +58,11 @@
                 <p><strong>Contact:</strong> ${p.contact_number}</p>
                 <p id="assigned-team-${p.id}"><strong>Last Bid:</strong> ${p.assigned_team}</p>
                 <p id="price-${p.id}"><strong>Price:</strong> ${p.price}</p>
+                <p><strong>Remaining budget:</strong> ${info.user_expense_budget}s</p>
                 <p><strong>Remaining:</strong> ${info.seconds_remaining}s</p>
+                
               </div>
+              
             </div>
           `;
           if (userIsAuthenticated === "True" && userRole === "team" && p.assigned_team_id !== loggedInTeamId) {
