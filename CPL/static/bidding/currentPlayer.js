@@ -12,9 +12,9 @@ function placeBid(playerId) {
   const button = document.querySelector(`[data-player-id="${playerId}"]`);
   if (button) button.textContent = 'Bidding...';
 
-  fetch('/authority/increase-duration/5/')
-    .then(res => res.json())
-    .catch(err => console.error('Failed to increase duration:', err));
+  // fetch('/authority/increase-duration/5/')
+  //   .then(res => res.json())
+  //   .catch(err => console.error('Failed to increase duration:', err));
 
   fetch('/bidding/place-bid/', {
     method: 'POST',

@@ -80,6 +80,11 @@ def place_bid(request):
     player = get_object_or_404(Player, id=data.get("player_id"))
 
     # increment price & assign FK
+    
+    if bidder_team.expense_budget < player.price + 100:
+        return JsonResponse({"success": False, "message": "Not enough budget left to bid this player"})
+    
+    
     player.price += 100
     player.assigned_team = bidder_team
     player.save()
@@ -180,7 +185,7 @@ def get_current_player_info2():
 from datetime import datetime, timedelta
 from django.utils import timezone
 from .models import AuctionSettings
-def get_current_player_info():
+def get_current_player_info(request):
     settings = AuctionSettings.objects.first()
 
     if not settings:
@@ -227,7 +232,13 @@ def get_current_player_info():
     round_start = settings.player_start_time
     round_end = round_start + PLAYER_DURATION
 
+    
+    
     if now >= round_end:
+        #CUT BUDGET
+        bidder_team = players[CURRENT_INDEX].assigned_team
+        bidder_team.expense_budget-= players[CURRENT_INDEX].price
+        bidder_team.save()
         # Player time over — move to next player
         settings.player_current_index += 1
         settings.player_duration = settings.player_default_duration
@@ -253,6 +264,17 @@ def get_current_player_info():
     player = players[CURRENT_INDEX]
     seconds_remaining = int((round_end - now).total_seconds())
 
+    # 💰 Get user team & budget info if user is logged in and has a team
+    user_team_id = None
+    user_expense_budget = None
+    if request and request.user.is_authenticated:
+        try:
+            team = Team.objects.get(user=request.user)
+            user_team_id = team.id
+            user_expense_budget = team.expense_budget
+        except Team.DoesNotExist:
+            pass
+    
     return {
         "status": "active",
         "player": {
@@ -271,7 +293,8 @@ def get_current_player_info():
         "current_index": CURRENT_INDEX,
         "time_until_start": 0,
         "time_since_end": 0,
-        "total_players": total_players
+        "total_players": total_players,
+        "user_expense_budget": user_expense_budget,
     }
 
 
@@ -296,5 +319,6 @@ def current_player_view(request):
 from django.views.decorators.cache import never_cache
 @never_cache
 def auction_status(request):
-    info = get_current_player_info() # returns dict with player, status, etc.
+    info = get_current_player_info(request) # returns dict with player, status, etc.
     return JsonResponse(info)
+
