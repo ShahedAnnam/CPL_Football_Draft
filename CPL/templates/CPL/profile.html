@@ -1,32 +1,39 @@
 {% extends 'CPL/base.html' %}
+{% load static %}
+
+{% block head %}
+  <link href="https://fonts.googleapis.com/css2?family=Merriweather:wght@400;700&family=Source+Sans+3:wght@400;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="{% static 'cpl/styleProfile.css' %}">
+{% endblock %}
 
 {% block content %}
-<div class="container mt-5">
-    <div class="card shadow p-4" style="max-width: 500px; margin: auto;">
-        <h3 class="mb-3">👤 Profile Info</h3>
+<div class="profile-wrapper">
+  <div class="profile-card">
+    <h2>👤 Profile Info</h2>
+    <p><strong>Username:</strong> {{ user.username }}</p>
+    <p><strong>Role:</strong> {{ user.role|default:"Not Set" }}</p>
 
-        <p><strong>Username:</strong> {{ user.username }}</p>
-        <p><strong>Role:</strong> {{ user.role|default:"Not Set" }}</p>
+    {% if messages %}
+      {% for message in messages %}
+        <div class="alert-message">{{ message }}</div>
+      {% endfor %}
+    {% endif %}
 
-        {% if messages %}
-            {% for message in messages %}
-                <div class="alert alert-success mt-3">{{ message }}</div>
-            {% endfor %}
-        {% endif %}
+    <hr>
 
-        <hr>
-        <h5 class="mt-4">🔑 Change Password</h5>
-        <form method="POST">
-            {% csrf_token %}
-            {{ password_form.as_p }}
-            <button type="submit" name="change_password" class="btn btn-outline-primary btn-sm">Change Password</button>
-        </form>
+    <h4>🔑 Change Password</h4>
+    <form method="POST">
+      {% csrf_token %}
+      {{ password_form.as_p }}
+      <button type="submit" name="change_password" class="gold-btn">Change Password</button>
+    </form>
 
-        <hr>
-        <form method="POST" style="margin-top: 1rem;">
-            {% csrf_token %}
-            <button type="submit" name="logout" class="btn btn-danger btn-sm">Logout</button>
-        </form>
-    </div>
+    <hr>
+
+    <form method="POST" style="margin-top: 1rem;">
+      {% csrf_token %}
+      <button type="submit" name="logout" class="logout-btn">Logout</button>
+    </form>
+  </div>
 </div>
 {% endblock %}

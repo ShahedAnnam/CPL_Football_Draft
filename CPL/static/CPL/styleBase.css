@@ -4,7 +4,7 @@
     top: 0;
     left: 50%;
     transform: translateX(-50%);
-    width: 90%;
+    width: 97%;
     z-index: 1000;
     background: linear-gradient(to right, #111827, #1f2937);
     color: #fff;
@@ -72,7 +72,7 @@
     }
 
     .cpl-navbar-brand {
-        font-size: 1rem;
+        font-size: 0.65rem;
     }
 
     .cpl-navbar-links {
