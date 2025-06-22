@@ -194,12 +194,12 @@ def get_current_player_info(request):
             "message": "Auction settings not found."
         }
 
+    now = timezone.now()
     AUCTION_START_TIME = settings.auction_start_time
-    PLAYER_DURATION = settings.player_duration  # could be longer/shorter than default
+    PLAYER_DURATION = settings.player_duration
     DEFAULT_PLAYER_DURATION = settings.player_default_duration
     CURRENT_INDEX = settings.player_current_index
     PLAYER_START_TIME = settings.player_start_time
-    now = timezone.now()
 
     players = Player.objects.all().order_by('id')
     total_players = players.count()
@@ -210,7 +210,6 @@ def get_current_player_info(request):
             "message": "No players available."
         }
 
-    # Auction not started yet
     if now < AUCTION_START_TIME:
         return {
             "status": "not_started",
@@ -219,7 +218,6 @@ def get_current_player_info(request):
             "total_players": total_players,
         }
 
-    # If all players are already finished
     if CURRENT_INDEX >= total_players:
         return {
             "status": "finished",
@@ -228,43 +226,49 @@ def get_current_player_info(request):
             "total_players": total_players,
         }
 
-    # Time window for current player
-    round_start = settings.player_start_time
-    round_end = round_start + PLAYER_DURATION
-
-    
-    
-    if now >= round_end:
-        #CUT BUDGET
-        bidder_team = players[CURRENT_INDEX].assigned_team
-        bidder_team.expense_budget-= players[CURRENT_INDEX].price
-        bidder_team.save()
-        # Player time over — move to next player
-        settings.player_current_index += 1
-        settings.player_duration = settings.player_default_duration
+    # 👇 If player_start_time is still default (unset), set it now
+    if settings.player_start_time < AUCTION_START_TIME:
         settings.player_start_time = now
-        settings.auction_end_time = now  # Save the time last player ended
         settings.save()
 
-        if settings.player_current_index >= total_players:
+    round_start = settings.player_start_time
+    round_end = round_start + PLAYER_DURATION
+    player = players[CURRENT_INDEX]
+    transition = False
+
+    if now >= round_end:
+        # 💰 Cut budget if assigned
+        if player.assigned_team:
+            bidder_team = player.assigned_team
+            if bidder_team.expense_budget >= player.price:
+                bidder_team.expense_budget -= player.price
+                bidder_team.save()
+
+        # Move to next player
+        CURRENT_INDEX += 1
+        settings.player_current_index = CURRENT_INDEX
+        settings.player_start_time = now
+        settings.player_duration = DEFAULT_PLAYER_DURATION
+        settings.auction_end_time = now
+        settings.save()
+        transition = True
+
+        if CURRENT_INDEX >= total_players:
             return {
                 "status": "finished",
                 "time_since_end": 0,
-                "current_index": settings.player_current_index,
+                "current_index": CURRENT_INDEX,
                 "total_players": total_players,
             }
 
-        return {
-            "status": "transition",
-            "message": "Player time ended. Moving to next player.",
-            "next_player_index": settings.player_current_index
-        }
+        # 👇 Get next player safely
+        player = players[CURRENT_INDEX]
+        round_end = now + DEFAULT_PLAYER_DURATION
 
-    # Current active player's info
-    player = players[CURRENT_INDEX]
-    seconds_remaining = int((round_end - now).total_seconds())
+    # ⏱ Clamp time remaining
+    seconds_remaining = max(0, int((round_end - now).total_seconds()))
 
-    # 💰 Get user team & budget info if user is logged in and has a team
+    # 🧾 Team budget info
     user_team_id = None
     user_expense_budget = None
     if request and request.user.is_authenticated:
@@ -274,9 +278,10 @@ def get_current_player_info(request):
             user_expense_budget = team.expense_budget
         except Team.DoesNotExist:
             pass
-    
+
     return {
         "status": "active",
+        "transition": transition,
         "player": {
             "id": player.id,
             "name": player.name,
@@ -291,8 +296,6 @@ def get_current_player_info(request):
         },
         "seconds_remaining": seconds_remaining,
         "current_index": CURRENT_INDEX,
-        "time_until_start": 0,
-        "time_since_end": 0,
         "total_players": total_players,
         "user_expense_budget": user_expense_budget,
     }
