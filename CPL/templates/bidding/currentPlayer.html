@@ -21,7 +21,6 @@
 </div>
 {% endblock %}
 
-
 {% block script %}
 <script>
   const loggedInTeamId = Number({{ logged_in_team_id|default:'null' }});
@@ -48,19 +47,22 @@
         }
         else if (info.status==='active') {
           let p = info.player;
-          let html=`
+          let html = `
             <h2>${p.name}</h2>
-            ${p.profile_picture_url?`<img src="${p.profile_picture_url}" />`:''}
-            <p><strong>Age:</strong> ${p.age}</p>
-            <p><strong>Position:</strong> ${p.playing_position}</p>
-            <p><strong>Batch:</strong> ${p.batch}</p>
-            <p><strong>Contact:</strong> ${p.contact_number}</p>
-            <p id="assigned-team-${p.id}"><strong>Last Bid:</strong> ${p.assigned_team}</p>
-            <p id="price-${p.id}"><strong>Price:</strong> ${p.price}</p>
-            <p><strong>Remaining:</strong> ${info.seconds_remaining}s</p>
-            <p><strong>Total Left:</strong> ${info.total_time_left}s</p>
+            <div style="display: flex; align-items: center; gap: 1rem; margin-bottom: 1rem;">
+              ${p.profile_picture_url ? `<img src="${p.profile_picture_url}" />` : ''}
+              <div style="flex-grow: 1; text-align: left;">
+                <p><strong>Age:</strong> ${p.age}</p>
+                <p><strong>Batch:</strong> ${p.batch}</p>
+                <p><strong>Position:</strong> ${p.playing_position}</p>
+                <p><strong>Contact:</strong> ${p.contact_number}</p>
+                <p id="assigned-team-${p.id}"><strong>Last Bid:</strong> ${p.assigned_team}</p>
+                <p id="price-${p.id}"><strong>Price:</strong> ${p.price}</p>
+                <p><strong>Remaining:</strong> ${info.seconds_remaining}s</p>
+              </div>
+            </div>
           `;
-          if (userIsAuthenticated==="True" && userRole==="team" && p.assigned_team_id!==loggedInTeamId) {
+          if (userIsAuthenticated === "True" && userRole === "team" && p.assigned_team_id !== loggedInTeamId) {
             html += `<button class="place-bid-btn" data-player-id="${p.id}">Place bid</button>`;
           }
           ac.innerHTML = html;
@@ -71,9 +73,9 @@
   }
 
   function getCookie(n) {
-    let v="; "+document.cookie,
-        parts=v.split("; "+n+"=");
-    return parts.length===2?parts.pop().split(';').shift():null;
+    let v = "; " + document.cookie,
+        parts = v.split("; " + n + "=");
+    return parts.length === 2 ? parts.pop().split(';').shift() : null;
   }
 
   let pausePoll = false;
@@ -81,40 +83,38 @@
   function placeBid(id) {
     pausePoll = true;
     let btn = document.querySelector(`button[data-player-id="${id}"]`);
-    btn.textContent='Bidding...';
+    btn.textContent = 'Bidding...';
     fetch("{% url 'bidding:place_bid' %}", {
-      method:'POST',
-      headers:{
-        'Content-Type':'application/json',
-        'X-CSRFToken':getCookie('csrftoken')
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'X-CSRFToken': getCookie('csrftoken')
       },
-      body:JSON.stringify({player_id:id})
+      body: JSON.stringify({ player_id: id })
     })
-    .then(r=>r.json())
-    .then(data=>{
-      if(!data.success) alert(data.message||'Fail');
+    .then(r => r.json())
+    .then(data => {
+      if (!data.success) alert(data.message || 'Fail');
       else {
-        document.getElementById(`assigned-team-${id}`)
-                .textContent = `Last Bid: ${data.assigned_team}`;
-        document.getElementById(`price-${id}`)
-                .textContent = `Price: ${data.price}`;
+        document.getElementById(`assigned-team-${id}`).textContent = `Last Bid: ${data.assigned_team}`;
+        document.getElementById(`price-${id}`).textContent = `Price: ${data.price}`;
       }
     })
     .catch(console.error)
-    .finally(()=>{
-      btn.textContent='Place bid';
-      setTimeout(()=>pausePoll=false,1000);
+    .finally(() => {
+      btn.textContent = 'Place bid';
+      setTimeout(() => pausePoll = false, 1000);
     });
   }
 
-  function attachBidListener(){
+  function attachBidListener() {
     let b = document.querySelector('.place-bid-btn');
-    if(b) b.onclick = ()=>placeBid(b.dataset.playerId);
+    if (b) b.onclick = () => placeBid(b.dataset.playerId);
   }
 
-  setInterval(()=>{
-    if(!pausePoll) updateAuctionInfo();
-  },500);
+  setInterval(() => {
+    if (!pausePoll) updateAuctionInfo();
+  }, 500);
 
   updateAuctionInfo();
 </script>

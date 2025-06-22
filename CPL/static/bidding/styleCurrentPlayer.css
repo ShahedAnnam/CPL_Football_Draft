@@ -5,7 +5,7 @@ body{
 }
 
 .auction-container {
-  max-width: 500px;
+  max-width: 600px;
   margin: 3rem auto;
   font-family: 'Source Sans 3', sans-serif;
   color: #f0f0f0;
@@ -63,17 +63,21 @@ body{
 
 /* Player image styling */
 #active-section img {
-  max-width: 160px;
-  border-radius: 50%;
+  width: 180px;       /* fixed width */
+  height: 220px;      /* taller height */
+  object-fit: cover;  /* cover the box nicely */
+  border-radius: 50%; /* this will make it oval */
   border: 3px solid #f39c12;
   margin-bottom: 20px;
   box-shadow: 0 0 20px #f39c12bb;
   transition: transform 0.3s ease;
 }
+
 #active-section img:hover {
   transform: scale(1.08);
   box-shadow: 0 0 30px #f39c12ee;
 }
+
 
 /* Bid button styling */
 .place-bid-btn {
@@ -107,3 +111,8 @@ body{
 #active-section:not(:empty) {
   display: block;
 }
+
+
+
+
+
