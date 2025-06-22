@@ -51,6 +51,8 @@ def set_auction_settings(request):
 
             settings.auction_start_time = make_aware(dt)
             settings.player_duration = timedelta(seconds=int(float(duration_seconds)))
+            settings.player_default_duration = settings.player_duration
+            settings.player_current_index = 0
             settings.save()
         except Exception as e:
             return render(request, 'authority/set_auction.html', {

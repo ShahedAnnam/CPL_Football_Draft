@@ -83,6 +83,14 @@ def place_bid(request):
     player.price += 100
     player.assigned_team = bidder_team
     player.save()
+    
+    #timing
+    
+    settings = AuctionSettings.objects.first()
+
+    # Calculate exact duration from original start to "now + auction_increase_time"
+    settings.player_duration = (now() - settings.player_start_time) + settings.auction_increase_time
+    settings.save()
 
     return JsonResponse({
         "success": True,
@@ -105,8 +113,9 @@ from datetime import datetime, timedelta, timezone
 
 AUCTION_START_TIME = datetime(2025, 6, 9, 21, 58, 0, tzinfo=timezone.utc)
 PLAYER_DURATION = timedelta(seconds=20)
+DEFAULT_PLAYER_DURATION = datetime(2025, 6, 9, 21, 58, 0, tzinfo=timezone.utc)
 
-def get_current_player_info():
+def get_current_player_info2():
     settings = AuctionSettings.objects.first()
     if settings:
         AUCTION_START_TIME = settings.auction_start_time
@@ -165,6 +174,104 @@ def get_current_player_info():
         "time_until_start": 0,
         "total_time_left": int((auction_end_time - now).total_seconds()),
         "time_since_end": 0,
+    }
+
+
+from datetime import datetime, timedelta
+from django.utils import timezone
+from .models import AuctionSettings
+def get_current_player_info():
+    settings = AuctionSettings.objects.first()
+
+    if not settings:
+        return {
+            "status": "error",
+            "message": "Auction settings not found."
+        }
+
+    AUCTION_START_TIME = settings.auction_start_time
+    PLAYER_DURATION = settings.player_duration  # could be longer/shorter than default
+    DEFAULT_PLAYER_DURATION = settings.player_default_duration
+    CURRENT_INDEX = settings.player_current_index
+    PLAYER_START_TIME = settings.player_start_time
+    now = timezone.now()
+
+    players = Player.objects.all().order_by('id')
+    total_players = players.count()
+
+    if total_players == 0:
+        return {
+            "status": "no_players",
+            "message": "No players available."
+        }
+
+    # Auction not started yet
+    if now < AUCTION_START_TIME:
+        return {
+            "status": "not_started",
+            "time_until_start": int((AUCTION_START_TIME - now).total_seconds()),
+            "current_index": CURRENT_INDEX,
+            "total_players": total_players,
+        }
+
+    # If all players are already finished
+    if CURRENT_INDEX >= total_players:
+        return {
+            "status": "finished",
+            "time_since_end": int((now - settings.auction_end_time).total_seconds()),
+            "current_index": CURRENT_INDEX,
+            "total_players": total_players,
+        }
+
+    # Time window for current player
+    round_start = settings.player_start_time
+    round_end = round_start + PLAYER_DURATION
+
+    if now >= round_end:
+        # Player time over — move to next player
+        settings.player_current_index += 1
+        settings.player_duration = settings.player_default_duration
+        settings.player_start_time = now
+        settings.auction_end_time = now  # Save the time last player ended
+        settings.save()
+
+        if settings.player_current_index >= total_players:
+            return {
+                "status": "finished",
+                "time_since_end": 0,
+                "current_index": settings.player_current_index,
+                "total_players": total_players,
+            }
+
+        return {
+            "status": "transition",
+            "message": "Player time ended. Moving to next player.",
+            "next_player_index": settings.player_current_index
+        }
+
+    # Current active player's info
+    player = players[CURRENT_INDEX]
+    seconds_remaining = int((round_end - now).total_seconds())
+
+    return {
+        "status": "active",
+        "player": {
+            "id": player.id,
+            "name": player.name,
+            "age": player.age,
+            "playing_position": player.playing_position,
+            "batch": player.batch,
+            "contact_number": player.contact_number,
+            "profile_picture_url": player.profile_picture.url if player.profile_picture else None,
+            "assigned_team": player.assigned_team.user.username if player.assigned_team else "Not bought yet",
+            "assigned_team_id": player.assigned_team.id if player.assigned_team else None,
+            "price": player.price,
+        },
+        "seconds_remaining": seconds_remaining,
+        "current_index": CURRENT_INDEX,
+        "time_until_start": 0,
+        "time_since_end": 0,
+        "total_players": total_players
     }
 
 
