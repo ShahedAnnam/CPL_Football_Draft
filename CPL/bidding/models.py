@@ -13,6 +13,9 @@ class AuctionSettings(models.Model):
     player_current_index = models.IntegerField(default=0)
     auction_end_time = models.DateTimeField(default=now)
     auction_increase_time = models.DurationField(default=timedelta(seconds=10))
-    
+    is_paused = models.BooleanField(default=False)
+    paused_at = models.DateTimeField(null=True, blank=True)
+    starting_budget = models.IntegerField(default=1000)
+
     def __str__(self):
         return "Auction Settings"

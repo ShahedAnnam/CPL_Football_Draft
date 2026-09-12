@@ -1,0 +1,4 @@
+1. Need to show the reducement of budget after bidding of any player
+2. It should be handled in a way such that it must fullfill thy buy of all class player at the threshold amount
+3. The animation should be more good so that it focus on 3 2 1  big and small gradually, aftere buying, there will be a congratulations message or something like that to the buying team, 
+4. 

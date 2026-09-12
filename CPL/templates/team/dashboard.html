@@ -22,7 +22,7 @@
                 <p><strong>Manager:</strong> <span class="detail-value">
                     {{ team.manager_name|default:"Not Assigned Yet" }}
                 </span></p>
-                <p><strong>Current Budget:</strong> <span class="detail-value">${{ team.budget|default:"0" }}</span></p>
+               <p><strong>Current Budget:</strong> <span class="detail-value">${{ team.expense_budget|default:"0" }}</span></p>
                 <p><strong>Players Signed:</strong> <span class="detail-value">{{ team.players_signed|default:"0" }} / 20</span></p>
             </div>
             <a href="{% url 'team:complete_profile' %}" class="card-button primary">
