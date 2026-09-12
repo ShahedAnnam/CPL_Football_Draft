@@ -57,13 +57,18 @@ def set_auction_settings(request):
             settings.save()
 
             # ✅ Set the new budget value
+                        # ✅ Set the new budget value
             if budget_amount:
                 budget_amount = int(budget_amount)
                 # Set in PlayerCategory (if used globally)
                 PlayerCategory.objects.update(budget_of_teams=budget_amount)
                 # Update each team's expense budget
                 Team.objects.all().update(expense_budget=budget_amount)
-
+                # FIX: remember this as the "reset to" amount so Start Auction
+                # can always restore every team to this budget, not just the
+                # first time settings are saved.
+                settings.starting_budget = budget_amount
+                settings.save()
         except Exception as e:
             return render(request, 'authority/set_auction.html', {
                 'error': f'Invalid input: {e}',

@@ -45,6 +45,24 @@
           fs.innerHTML = `<h2>Auction ended</h2>
                           <p>Ended ${info.time_since_end}s ago</p>`;
         }
+                else if (info.status==='paused') {
+          let p = info.player;
+          ac.innerHTML = `
+            <h2>${p.name} <span style="color:#dc3545;">(Auction Paused)</span></h2>
+            <div style="display: flex; align-items: center; gap: 1rem; margin-bottom: 1rem;">
+              ${p.profile_picture_url ? `<img src="${p.profile_picture_url}" />` : ''}
+              <div style="flex-grow: 1; text-align: left;">
+                <p><strong>Age:</strong> ${p.age}</p>
+                <p><strong>Batch:</strong> ${p.batch}</p>
+                <p><strong>Position:</strong> ${p.playing_position}</p>
+                <p><strong>Last Bid:</strong> ${p.assigned_team}</p>
+                <p><strong>Price:</strong> ${p.price}</p>
+                <p><strong>Remaining when paused:</strong> ${info.seconds_remaining}s</p>
+              </div>
+            </div>
+            <p><em>Bidding is paused by the authority. Please wait...</em></p>
+          `;
+        }
         else if (info.status==='active') {
           let p = info.player;
           let html = `

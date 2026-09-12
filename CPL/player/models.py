@@ -29,16 +29,22 @@ class Player(models.Model):
     player_class = models.CharField(max_length=1, choices=CATEGORY_CHOICES, blank=True, null=True)
 
     def save(self, *args, **kwargs):
-        # Set initial price based on player_class if price is default or zero
-        if not self.price or self.price == 100:
+        # FIX: the old condition (`price == 0 or price == 100`) re-triggered
+        # every time a live bid price happened to pass through exactly 0 or
+        # 100, silently resetting it back to the category base price and
+        # wiping out real bidding progress. Now this only auto-derives the
+        # base price while the player hasn't been won by a team yet — once
+        # `assigned_team` is set (i.e. a bid has been placed and accepted),
+        # this block can never fire again for that player.
+        if self.assigned_team_id is None and self.price in (0, 100):
             if self.player_class == 'A':
                 self.price = 1000
             elif self.player_class == 'B':
                 self.price = 700
             elif self.player_class == 'C':
                 self.price = 500
-            else:
-                self.price = 0
+            elif not self.price:
+                self.price = 100
         super().save(*args, **kwargs)
 
 
